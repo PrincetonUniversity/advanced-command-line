@@ -1,5 +1,4 @@
-# Bonus Commands
-
+# Miscellaneous Commands
 This section contains miscellaneous commands that I use frequently which aren't
 large enough to be stand alone topics.
 
@@ -16,13 +15,29 @@ following sections.
 The last three files are common formats in bioinformatics and are examples of
 structured text.
 
+From the base directory,
+```
+scripts/setup.sh 02_misc/
+```
+will setup a tmux session with each exercise as a separate window.  `setup.sh`
+also accepts a second argument with the viewer to load each exercise with
+instead of the default `less`.  `"vim -c 'set ft=markdown'"` uses vim with
+proper syntax highlighting for markdown.
+
+As we venture further into sed, grep, and awk you will find you can do very
+complex processing from the command line.  Always be mindful that your bash
+history is ethereal.  The awk command from last month may no longer exist and
+with tmux sessions the command history becomes more convoluted.  If 1) your
+command is longer than 80 characters OR 2) will be run more than twice you
+should wrap it in a shell script and keep it under version control with the
+relevant project.  A fellow lab member or future you will be thankful you did!
 
 ## bc
 The basic calculator has its own programming language and allows for arbitrary
 precision in calculations.  Its syntax is similar to C and has builtin
 functions for sqrt, e (exponential), l (natural log) and trig functions.
 
-I use it only for an interactive calculator.
+I only use it as an interactive calculator.
 
 ### EXERCISE
 Try the following
@@ -41,8 +56,9 @@ following alias makes `bc` more useful.
 alias calc="bc -lq"
 ```
 
-I choose calc because I can never remember `bc`.  The `-l` option sets the
-scale to 20 and loads trig functions.
+I choose calc because I can never remember `bc` and I'm used to searching my
+local computer for a calculator by typing `calc`.  The `-l` option sets the
+scale to 20 and loads trig functions.  `-q` removes information at startup.
 
 ### EXERCISE
 Add this alias to your `~/.bashrc`
@@ -80,18 +96,17 @@ sed '/^##/d' sample.vcf | column -t
 ```
 Because column needs to read the entire file to determine column widths,
 be sure to only run it on small files (<100 lines) or the head of a larger
-file.  To split on a character besides space, use the `-s` option to specify
-a character set to split on.
+file. Use the `-s` option to specify a character set to split on.
 
 Now that we can see the file, let's extract column 3 (ID) with cut.
 ```
 sed '/^##/d' sample.vcf | cut -f3 | column -t
 ```
-Note that column is the last command as it needs to format the extracted text.
-Switching the order prints all columns as column uses spaces to align columns
-and cut expects tabs.
+Note that `column` is the last command as it needs to format the extracted
+text.  Switching the order prints all columns as `column` uses spaces to align
+columns and `cut` expects tabs.
 
-You can specify the delimiter with the `-d` option, by default it is tabs.
+You can specify the delimiter with the `-d` option, by default it is tab.
 To work with a csv, you would use `cut -d,`.
 
 The fields to extract are specified with the `-f` option.  The argument can
@@ -123,21 +138,21 @@ head -n 7 words.txt | paste - 5words.txt
 head -n 7 words.txt | paste 5words.txt
 head -n 9 words.txt | paste - - -
 ```
-Clean up `5words.txt` when you are done.
+Remove `5words.txt` when you are done.
 
 ## Process Substitutions
-You should be familiar with piping to chain commands together and using `-`
-as a placeholder for stdin/stdout.  However, `-` is a convention and may not
-be supported and it doesn't help if you need to chain together multiple
-commands for input.  Consider the problem of printing from `sample.vcf` the
-columns in order of CHROM, REF, ALT, POS.  We want to run something like
-`cut -f1,4,5,2` but have seen that doesn't work.
+You should be familiar with piping to chain commands together and using `-` as
+a placeholder for stdin/stdout.  However, `-` is a convention and may not be
+supported in a specific program.  It also doesn't help if you need to chain
+together multiple commands for input.  Consider the problem of printing from
+`sample.vcf` the columns in order of CHROM, REF, ALT, POS.  We want to run
+something like `cut -f1,4,5,2` but have seen that doesn't work.
 
 We also just learned about paste, which can combine two or more files together
 so how do we pipe two cut commands into a paste command?  You could use
-named pipes, but bash has a nice shortcut which involves process substitution.
+named pipes, but bash has a nice shortcut called process substitution.
 When you place a process in `<(CMD)` it acts as a file containing the stdout
-of `CMD`.  Similarly, `>(CMD)` can be used for piping output.
+of `CMD`.  Similarly, `>(CMD)` can be used for piping output to a command.
 
 So to print our vcf, we can use
 ```
@@ -146,7 +161,8 @@ paste <(sed '/^##/d' sample.vcf | cut -f1,4,5) \
 | column -t
 ```
 Note that the contents of the process substitution can contain pipes or
-additional process substitutions.
+additional process substitutions.  Line continuations `\` are used to space
+the command for this readme.
 
 The advantage of process substitutions is that you can prevent using temporary
 files in a command.  The substitution is done by the operating system so
@@ -157,7 +173,8 @@ As with pipes, the named pipes produced by process substitution can't be used
 for seeking/searching in a file which is required for some programs.
 
 I mostly use process substitution for performing preprocessing or with
-`diff` and `cmp` where I don't want the intermediate files.  We will cover
+`diff` and `cmp` where I don't want the intermediate files.  It's also helpful
+working with zipped files that you don't want to decompress.  We will cover
 `diff` and `cmp` below.
 
 ## fc and C-x C-e
@@ -201,6 +218,9 @@ it is time to move to an editor.  Recall the last command with `C-p` or the
 up arrow, then type `C-xC-e` to open your editor with the current command.
 Again, save and close to run the command.
 
+`fc` and the `C-xC-e` chord are nice ways to use the full editor power on a
+command you don't to keep around.
+
 ## cmp, diff and comm
 The commands `cmp`, `diff` and `comm` all compare two files to find
 differences.  During development, I will frequently have a 'ground truth'
@@ -222,13 +242,13 @@ investigate the problem or use one of the other commands to get more
 information.
 
 `diff` lists all differences between two files in a somewhat cryptic output.
-Run the following
+Fasta files contain header lines that start with a `>` and then a protein or
+nucleic acid sequence beneath.  Run the following
 ```
 diff sample.fasta <(sed '/^>/d' sample.fasta)
 ```
-The lines starting with a `>` in a fasta refer to the header.  We are using
-process substitution to strip out headers in the second file.  The first two
-lines of diff are
+We are using process substitution to strip out headers in the second 'file'.
+The first two lines of diff output are
 ```
 1d0
 < >crab_anapl ALPHA CRYSTALLIN B CHAIN (ALPHA(B)-CRYSTALLIN).
@@ -250,7 +270,7 @@ part of the differences.
 ```
 # this only considers first 5 lines
 diff <(head -n 5 sample.fasta) <(sed '/^>/d' sample.fasta | head -n 5)
-# this diffs entire file and outputs head
+# this diffs the entire file and outputs head
 diff sample.fasta <(sed '/^>/d' sample.fasta) | head
 ```
 
@@ -280,7 +300,7 @@ Any time you are simply repeating the last command, you could use `watch` or
 `watch` is a standard command that is present on RC clusters.  It allows you
 to invoke a command every `n` seconds.
 
-## EXERCISE 
+### EXERCISE 
 Try these sample `watch` commands.  Exit `watch` with `C-c`.
 ```
 watch -n 5 date  # run date every 5 seconds
@@ -288,7 +308,7 @@ watch -n 10 squeue -u $USER  # pool squeue every 10 seconds
 watch -n 5 'ls -lth *'
 ```
 
-While `squeue` has a `-i` option to repeated print the output, `watch` also
+While `squeue` has a `-i` option to repeatedly print the output, `watch` also
 clears the screen.  If you need to use glob expansions, wrap the command
 in single quotes.
 

@@ -1,5 +1,4 @@
 # Regular Expressions
-
 Regular expressions are powerful, ubiquitous and daunting when first
 encountered.  They are general text matching patterns that can be as specific
 as you like.  Reading regular expressions (or regexes) is similar to learning
@@ -22,7 +21,8 @@ ZIP code is a series of 5 numbers with an optional dash and 4 more digits
 (ZIP+4), does this address have a valid zip code?"  A simple regex matching
 this is 
 ```
-\b\d{5}(-\d{4})?\b
+\b\d{5}(-\d{4})?\b  # perl syntax
+\<[[:digit:]]{5}(-[[:digit:]]{4})?\>  # POSIX
 ```
 Which will match "Princeton, NJ 08540" but not "My number is 867-5309".  It
 will also match "12345 Fake St.", which we know is not a zip code by context.
@@ -65,7 +65,7 @@ escaping metacharacters to try to fix it, then change my engine to use a more
 expanded set.  I always have to lookup complex metacharacters like
 positive-lookahead since they change between languages and I don't use them
 often.  Some character classes are supported or named differently between
-tools.
+tools as seen in the zip code example.
 
 We will stick to egrep for our exercises.  Note egrep and fgrep are deprecated
 so if you are writing a script, use grep -E/F instead.  On the command line
@@ -109,8 +109,8 @@ Here we ask for the character c, followed by the character a, followed by
 the character t.
 
 The first two metacharacters we will discuss are `^` and `$` which represent
-the start and end of a line, respectively.  Note these are not text specific
-but position specific.
+the start and end of a line, respectively.  Note these don't specify text, but
+positions in the line.
 
 ### EXERCISE
 Try the following and see if the results are what you expect:
@@ -144,7 +144,7 @@ an `a`, `[a^]` means an `a` or a `^`
 
 ### EXERCISE
 Search for any words in `words.txt` that have a `q` not followed by a `u`.
-Why is Qatar not returned?  How about Iraq?
+Did you match Qatar?  How about Iraq?
 
 Some character classes are common enough to have metacharacters associated with
 them:
@@ -154,12 +154,17 @@ them:
  - `\W`: `[^a-zA-Z0-9_]` non alpha numerics and whitespace
  - `\d`/`[[:digit:]]`: `[0-9]`
  - `\D`: `[^0-9]`
-Perl, python, and vim use the `\x` shorthand while the POSIX standard specifies
-`[[:class:]]`.  The negated POSIX classes are written like:
+Perl, python, and vim use the `\x` shorthand or the POSIX standard, which
+specifies `[[:class:]]`.  The negated POSIX classes are written like:
 ```
 [^[:digit:]]
 ```
-for a non digit, equivalent to `\D`.
+for a non digit, equivalent to `\D`.  If you need multiple classes in a
+character class, you can combine them like
+```
+[[:digit:][:space:]]
+```
+for a digit or a space.
 
 ### EXERCISE
 Search for any words in words.txt with a digit.  Remember egrep uses POSIX
@@ -192,6 +197,10 @@ Note that unlike character classes, alternation uses entire subexpressions
 instead of single characters.  `gr(a|e)y` matches 'gray' or 'grey'  but
 `gra|ey` matches 'gra' or 'ey'.  The parentheses define the extent of the
 alternation in the first example.
+
+### EXERCISE
+Using alternation, search again for words with a q followed by not u.
+Your regex should match `FAQ`, `Qatar` and `Iraq`.
 
 ## Quantifiers
 Consider searching `words.txt` for words with two `a`'s in a row.
@@ -238,13 +247,13 @@ as possible before considering the next token.  This has consequences for
 matching and efficiency.
 
 ### EXERCISE
-Search `words.txt` for `z*` and `z+`.  What can you say about the quantifiers
-`?` and `*`?
+Search `words.txt` for `z*`, `z?` and `z+`.  What can you say about the
+quantifiers `?` and `*`?
 
 ### EXERCISE
 Consider the problem of extracting quoted text from `metamorphosis.txt`.  A
 good first guess on this regex would be `".*"`, that is literally, a double
-quote, any number of characters followed by a double quote.  Here's the
+quote, any number of characters followed by a double quote.  Here are the
 first two results with the matching characters shown below:
 ```
 $ egrep '".*"' metamorphosis.txt | head -n 2
@@ -281,12 +290,12 @@ Mississippians  # MATCH i
 Let's try to find all words with a repeated 3 character
 sequence, similar to `(alf)+`.  A first guess may be `(...){2}`, which is any
 three characters seen two times.  This is effectively `(...)(...)`, and
-matches anything with 6 or more characters.
+matches anything with 6 or more characters.  Try it!
 
 Instead, we want the second appearance of `(...)` to match what is seen the
 first time.  So far we have used parentheses to group together characters to
 apply a quantifier to, `(alf)+`, and to limit the scope of alternation,
-`gr(a|e)y`.  Parentheses have another effect, they capture their content and
+`gr(a|e)y`.  Parentheses have another effect, they capture their content which
 can be used again in the regex.  The matches are recalled with `\<N>` where 
 `<N>` is `[1-9]` matching the first through ninth set of parentheses.  The
 regex we are after is then `(...)\1`, which is any 3 characters followed by
@@ -296,18 +305,19 @@ When multiple parentheses are in the regex, they are numbered according to the
 appearance of the opening parenthesis.  So `((.)..)\2\1` matches:
 ```
 overseers
-  ^     ^
   ...2111
+  ^     ^
 ```
 `ers` matches to the `...` and `\1` gets `ers` and `\2` gets `e`.
 
 ### EXERCISE
 Again with `words.txt`
- - Check the difference between `(.){3}\1` and `(.{3})\1`
- - What word has the same four characters repeated in it?
+ - what is the difference between `(.){3}\1` and `(.{3})\1`?
+ - What word has the four characters repeated in it?  Try again allowing
+   characters between the repeated string.
  - Palindromes in general are not regular, but for a given length we can
    still write a regex for them.  Find palindromes of length 3, 4, and 5.
-   Palindromes are the same forward and backwords, e.g. 'rotator' is a length
+   Palindromes are the same forward and backward, e.g. 'rotator' is a length
    7 palindrome.
 
 ## Topics to look into
@@ -317,7 +327,8 @@ Some useful topics to research on your tool of interest are:
  - Word boundaries
  - Non-capturing parentheses
 
-Consider the more challenging problem of matching text in parentheses
+### General special/normal extraction
+Consider the more challenging problem of matching text in quotations
 while allowing escaped quotes:
 ```
 She said, "Woah, look at \"that\"!"
@@ -343,5 +354,7 @@ string!  An efficient and non-exponential version is `"[^\\"]*(\\.[^\\"]*)*"`.
 The general form is `opening normal* (special normal*)* closing` where:
  - normal is more common than special, though both are allowed in the sequence
  - the start of special and normal are distinct
- - special must no match nothing
+ - special must not match nothing
  - special is atomic (does not contain `*` or `+`)
+
+If you can follow the above regex you are well on your way to mastery!

@@ -1,5 +1,4 @@
 # awk
-
 awk is a general scripting language whose name is derived from the surnames
 of the original authors.  As a motivating example, consider a python script
 to print the sum of the second and third columns in a file:
@@ -16,13 +15,13 @@ import sys to read stdin.  The equivalent awk program is:
 awk '{print $2+$3}'
 ```
 
-Similar to sed, the general operation is
+Similar to sed, the general command is
 ```
 awk [script] INPUT
 ```
 The script can be provided as a separate file using the `-f` option.
 
-The setup script in this module uses the same files as `03_regex`.
+The setup script in this module uses the same files as `02_misc`.
 
 ## When to use awk
 We are not going to cover many features in awk, so don't think that awk is
@@ -30,13 +29,14 @@ not capable of performing complex tasks.  Suitable tasks for awk are
 intermediate in complexity.  Simple things like searching a file or printing
 a column are better for `grep` or `cut` respectively.  Generating a histogram
 or using one file to map/translate another are possible in awk, but before
-developing that solution ask yourself if python isn't a better choice.  If
-your awk spreads over more than 2 lines, start writing python!
+developing that solution ask yourself if python isn't a better choice so you
+can perform additional analyses on the results.  If your awk spreads over more
+than 2 lines, start writing python!
 
 Said another way, if you are thinking "I just want to do x", awk is probably
 suitable.  If you are thinking "awk could probably do this", you are right
 but spending an hour learning awk will have fewer benefits than learning
-about a new library or feature in a modern scripting lanugage to do the same
+about a new library or feature in a modern scripting language to do the same
 task.
 
 Some general hints for when to use awk:
@@ -82,6 +82,7 @@ awk 'BEGIN {total = 0} {total += $1} END {print total}' INFILE
 Note the script is wrapped in single quotes to prevent shell expansions.
 
 Some observations you should be making:
+ - awk is a scripting language with variables and functions.
  - awk doesn't have declared types.  In actuality we don't have to initialize
    variables to use them.  Uninitialized variables have the string type ""
    and numeric type 0.
@@ -103,7 +104,7 @@ modified as described later.
 
 Variables are separated into user-defined, built-ins and fields.  A variable
 can contain letters, digits and underscores but cannot start with a number,
-`/[a-zA-Z_][0-9a-zA-Z_]+/`.  As mentioned above, variables don't need to
+`/[a-zA-Z_][0-9a-zA-Z_]*/`.  As mentioned above, variables don't need to
 be declared or initialized and have default values of "" or 0 depending on
 their type context.
 
@@ -127,7 +128,7 @@ Built-in variables are all upper case.  The ones we will use are:
 
 The `FS` and `RS` variables are actually regular expressions used for splitting
 a file by records and fields.  It is good practice to set this in the `BEGIN`
-block, though commandline options can also be used to set their values.
+block, though command line options can also be used to set their values.
 It is common to set `FS` to parse comma-separated files or restrict splitting
 to tabs only.  `RS` is less frequently utilized, but can be very helpful for
 parsing multiline content.  For example, setting `RS=">"` for the
@@ -137,7 +138,8 @@ The final class of variables are fields which are stored in numeric indices
 accessed with `$`.  The variable `$0` contains the entire line.  Changing
 other field variables will cause `$0` to be rebuilt with the current `OFS`.
 Calling `print` with no arguments will default to printing `$0`.  A variable
-can be used as input to the field reference operator.
+can be used as input to the field reference operator, e.g. `$i` where `i` is
+a numeric variable.
 
 ### EXERCISE
 Work through the following commands to see how `OFS` is utilized with `$0`.
@@ -145,7 +147,7 @@ Work through the following commands to see how `OFS` is utilized with `$0`.
 head human.chrom.sizes
 # space between strings is used for concatenation
 head human.chrom.sizes | awk 'BEGIN{OFS=","} {print $1 $2}
-# using a comma specifies separate arguments to print
+# using a comma specifies separate arguments to print OFS
 head human.chrom.sizes | awk 'BEGIN{OFS=","} {print $1, $2}
 # printing entire line
 head human.chrom.sizes | awk 'BEGIN{OFS=","} {print}
@@ -153,6 +155,7 @@ head human.chrom.sizes | awk 'BEGIN{OFS=","} {print}
 head human.chrom.sizes | awk 'BEGIN{OFS=","} {$1=$1; print}
 # set ORS
 head human.chrom.sizes | awk 'BEGIN{OFS=","; ORS="<>"} {$1=$1; print}
+# C-l to clear screen
 ```
 
 Note that setting `FS` leaves `OFS` unmodified.  The default `OFS` is a single
@@ -167,7 +170,7 @@ We have used a few operators, but here is an extensive list
  - `~ !~`                 Test regex match and negate match
  - `< <= > >= != ==`      Relational operators
  - `<SPACE>`              String concatenation
- - `++ --`                Increment and decrement
+ - `++ --`                Increment and decrement, postfix or prefix
 
 ### EXERCISE
 The file `word_counts.txt` contains a space-separated table of frequencies of
@@ -194,6 +197,7 @@ is `sqrt((sum_squares - sums^2 / NR) / (NR - 1)`.  Useful for a running tally
 of data...
 
 ## Patterns and Actions
+When I said awk scripts have 3 main parts, that was a simplification.
 awk scripts are a sequence of pattern-matching rules and associated actions.
 ```
 [pattern] { action }
@@ -228,19 +232,14 @@ pattern to match the full line and a boolean expression with `~`.
 ### EXERCISE
 Recalculate the mean and standard deviation of `word_counts.txt` considering
 only words that appear fewer than 1000 times.  Repeat with more than 1000
-times.  The following command calculates the mean and standard deviation for
-all entries
+occurrences.  The following command calculates the mean and standard deviation
+for all entries
 ```
 awk 'BEGIN{OFS="\t"}
 {total += $2; sqr += $2**2}
 END {print "mean", total/NR;
 print "std", sqrt((sqr - total**2 / NR) / (NR-1))}' word_counts.txt
 ```
-Note, long commands are hard to edit even if you are proficient with shell
-navigation.  The shell command `fc` (for fix command) recalls the last command
-in your text editor, the `EDITOR` environment variable.  In the middle of
-typing a command, you can also type `C-x C-e` to get the current command in
-the editor.  Type `:q<ENTER>` to exit vim if you don't have your `EDITOR` set.
 
 ## Conditionals and loops
 As you may expect, awk has support for if, else, for, while, and do.
@@ -288,8 +287,8 @@ for (i = 1; i < NF; i++)
 ```
 
 We aren't spending much time on these constructs because they are common
-in many programming languages.  awk also has `break`, `continue`Remember, complicated awk scripts are likely
-better written in another language!
+in many programming languages.  awk also has `break` and `continue`. Remember,
+complicated awk scripts are likely better written in another language!
 
 ### EXERCISE
 Find *the* most frequent word in `word_counts.txt` using an if statement.
@@ -315,7 +314,7 @@ awk '{for(i=1; i<NF; i++) counts[$i]++}
 END{for(i in counts) print counts[i], i}' metamorphosis.txt | sort -nr -k1 | less
 ```
 
-### BONUS
+### BONUS EXERCISE
 Find the mean and standard deviation of each word count separated by part of
 speech.
 
@@ -341,7 +340,7 @@ print > "test.out"
 print | "sort -n"
 ```
 The first line redirects print output to the file `test.out` and the second
-pipes the output through sort with a numeric sort.  What makes this so useful
+pipes the output through sort with a numeric key.  What makes this so useful
 is that any expression can be used for the filename.  If you need to perform
 multiple pipes or a pipe and a redirect, combine them all in the command
 as a string.
@@ -351,7 +350,7 @@ Consider the following script before running and checking the output:
 awk '{print | "sort -n -k1 | head > " $4 ".out"}' word_counts.txt
 ```
 
-Notice that the string used in the pipe contains the redirection and uses
+Notice that the string used in the pipe contains a redirection and uses
 string concatenation to build the filenames with the contents of the fourth
 column, the part of speech.  This creates 11 files with the most common words
 for each part of speech.
@@ -369,11 +368,13 @@ However, neither would work properly for the parts of speech splitting.
 ## More functions
 awk has several built in functions for mathematical operations and string
 manipulations.  You can get user input, call system functions, and make 
-interactive programs.  You can also write your own functions.
+interactive programs.  You can also write your own functions.  `printf` is
+useful for structured output and follows similar conventions to shell or c
+printf.
 
-### BONUS
+### BONUS EXERCISE
 Repeat the word counting of `metamorphosis.txt` but remove leading and trailing
-punctuation and cast everything to lowercase.q
+punctuation and cast everything to lowercase.
 
 ## Closing
 I hope you have an appreciation for the utility of regular expressions to
@@ -382,7 +383,6 @@ language constructs in sed and awk and replace complex string subset and
 testing functions that would otherwise be required.  Now that you have an
 idea of the kinds of problems sed and awk can solve and their strengths, I
 hope you know enough to find solutions when you need them.  The more you
-practice, the less time you spend needing to look up common constructs.
+practice, the less time you spend needing to look up common patterns.
 
-Finally, I hope the exercises have given you practice with tmux!  The next
-section contains a few other command line utilities that I find indispensable.
+Finally, I hope the exercises have given you practice with tmux!

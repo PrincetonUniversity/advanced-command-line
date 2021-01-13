@@ -1,10 +1,9 @@
 # sed
-
 sed (and we will see later, awk) are specialized derivatives of the line editor
 ed.  You will probably never use ed, but there is overlap in the command syntax
-between the three programs and in vim.  The `s` in sed is for stream.  Unlike
+between the three programs and vim.  The `s` in sed is for stream.  Unlike
 ed which operates on a file, sed works with streams, taking stdin, performing
-an operation and printing to stdout.  You  should be familiar with redirection,
+an operation and printing to stdout.  You should be familiar with redirection,
 but it is worth mentioning: if you want to modify the file, `file.txt` the
 operation
 ```
@@ -16,7 +15,7 @@ happy with the edits.  The script can also be provided as a separate file
 using the `-f` option, which is useful for repeating several commands and
 keeping a record in a VCS.
 
-The setup script in this module uses the same files as `03_regex`.
+The setup script in this module uses the same files as `02_misc`.
 
 ## When to use sed
 sed is very expressive and can perform operations similar to awk, grep, or an
@@ -25,7 +24,7 @@ interactive file editor.  Generally, you should use sed over other options if
    take a long time.  If you just need to perform some replacements on the file
    sed is much more efficient because it works line-wise.
  - You can do the operation in the middle of a stream.  Even if the file is
-   small, working on a pipe is better than making unnecessary intermediate
+   small, working on a pipe is better than making unnecessary, intermediate
    files.
  - You need to replace or extract some part of the text.  If you need to
    perform an arithmetic operation, awk is a better choice.  If you need more
@@ -59,7 +58,7 @@ You should have noticed:
    in order and can modify previous substitutions.
  - TARGET is a regex and can match anywhere in a word.
  - The sed option, `-n` suppresses automatic printing.  To print a command, use
-   the command flag, `p`.  `p` is also a command by itself.
+   the command flag, `p`.  `p` is also a command by itself we will cover later.
  - The command flag `g` performs the substitution on every occurrence of
    TARGET in the line.
  - The TARGET is a regex and can contain word boundaries, ranges, quantifiers,
@@ -77,24 +76,26 @@ Multiple file arguments are processed as if concatentated.
 
 ### EXERCISE
 The `human.chrom.sizes` contains several contigs besides the sex chromosomes
-(X, Y) and the autosomes (chr1-22).  Using sed, print only those 24 chromosomes
-and remove the leading `chr` from each entry.
+(X, Y) and the autosomes (chr1-22).  Using sed, print only the 22 autosomes
+and 2 sex chromosomes and remove the leading `chr` from each entry.
 
 ## Ranges
 By default, sed will apply the expression to every line in the input file.
-The range can be limited by supplying a range.  The syntax is
+The affected lines can be limited by supplying a range.  The syntax is
 ```
 start,end[command]
 ```
 where start and end can be regular expressions, line numbers or the
-metacharacter `$` for the last line.  A range is negated by adding `!` to it.
+metacharacter `$` for the last line.  A range is negated by adding `!` before
+the command, e.g. `start,end!command`.
 
 You can perform multiple commands in a range by grouping them with `{}`.
 ```
 /target/{ command1 ; command2 ; command3 }
 ```
 If you wrap your command in a single quote you can use line continuation in
-sed to make the command easier to write and read.
+bash to make the command easier to write and read.  Don't forget about `fc`
+and `C-xC-e`.
 
 ### EXERCISE
 Keeping with the substitute and print commands, let's work with the
@@ -107,8 +108,8 @@ and then a protein or nucleic acid sequence below.
    the line with `^` and `$`.
  - Print the entry for `crab_human`.  You may have to pipe the output through
    head.
- - Replace all occurrences of `ST` with `*st*` in the header lines.
  - Remove the last `.` from the header lines
+ - Replace all occurrences of `ST` with `*st*`, but only in the header lines.
  - For each non-header line, highlight palindromes of length 5 with a `*` to
    either side.
 
@@ -120,7 +121,7 @@ As you try to do more complex operations, here are some tips:
  - Work iteratively to build complexity.
  - You don't have to do it all with sed in one line!  It may take several
    pipes and other commands to get the job done.  If it seems too complex,
-   consider making a wrapper script so you know what you've done.
+   consider making a wrapper script so you have a record of what was done.
 
 ## More commands
 ### Substitute
@@ -130,8 +131,9 @@ mentioning.
 The separator in the command can be any character except newline.  This is not
 the case for the range argument.  If you were searching for a filename, for
 example, a suitable command would be `s|/usr/bin/|~/.local/bin|`, where `|`
-is used instead of `/`.  If you need a `/` you can also escape it in the
-target or replacement.  Common separators are `|` and `!`.
+is used instead of `/` to separate the command from the target and replacement.
+If you need a `/` you can also escape it in the target or replacement.  Common
+separators are `|` and `!`.
 
 We have already seen back references using `\1`, but you can also use `&` to
 get the text of the entire target.  For the palindrome problem above, you
@@ -151,12 +153,11 @@ This maps any occurrence of a to x, b to y, and c to z.
 
 ### Print
 We have used print as a flag for substitute to print just lines with matches.
-You can use print as a standalone flag to perform some common tasks for `grep`
-or `head`.
+You can use print as a standalone flag to perform some common tasks similar to
+`grep` or `head`.
 ```
-sed -n '1,10p'  # print first 10 lines of file
-sed -n '5p'  # print 5th line
-sed -n '5p'  # print 5th line
+sed -n '1,10p'   # print first 10 lines of file
+sed -n '5p'      # print 5th line
 sed -n '/cat/p'  # print lines with 'cat', like grep
 ```
 Note that if the `-n` option is omitted, the desired lines will be printed
@@ -192,7 +193,7 @@ sed -n '/^>/{=;p}' sample.fasta
 ### EXERCISE
 `metamorphosis.txt` contains three sections, `I`, `II`, and `III` signified
 by a line containing those numerals followed by some space.  Write a sed
-command to print the line numbers of each section.
+command to print the line numbers of each section.  Also look into `grep -n`.
 
 ### Next
 The next command reads the next line of the file into the line buffer.  It
@@ -210,8 +211,8 @@ sed -n '/^>/{N;s/A/@/g;p}' sample.fasta
 ```
 
 As you can see, `N` can be helpful with multiline substitutions and can perform
-matches across lines.  Generally, perl-style regexes are more useful for such
-applications.
+matches across lines.  Generally, perl-style regexes are more useful for
+multiline regex operations.
 
 ### Delete
 The delete command clears the line buffer.  Any commands after delete are not
@@ -227,8 +228,8 @@ performed, neither print nor substitute are executed.
 A common command is `sed '/^$/d'` to delete blank lines in a file.
 
 ### EXERCISE
- - Create an outline of this README by printing only lines that start with
-   `#` and substituting `#` with a tab or two spaces.
+ - Create an outline of `02_misc/README.md` by printing only lines that start
+   with `#` and substituting `#` with a tab or two spaces.
  - Try to delete all block code sections in this README.  Remember ranges can
    accept regular expressions.
  - Combine the two commands to get a clean outline

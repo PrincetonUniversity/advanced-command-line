@@ -24,6 +24,7 @@ precision.  You can upgrade your workflow to get more done with less effort.
 My favorite example is vim.  After a few days of *really* learning vim, I
 started to view files as a game board instead of a stream of text.  Editing is
 then just jumping and operating around the board until it looks how you want.
+I started to dream about editing files...  
 
 Since you can't memorize 3 hours of tips in 3 hours, I hope you will come away
 remembering the following:
@@ -41,7 +42,7 @@ remembering the following:
    your new knowledge and negative reinforcement to stop using the old method.
  - Spend minutes to save seconds.  Overall, what I'm recommending is to stop
    doing tangible work for a few minutes to look up how to do something a new
-   way.  Then mentally work on using this new tool until it's second nature.
+   way.  Then, mentally work on using this new tool until it's second nature.
    At the end of the day, using the new movement may save seconds, but if you
    are lucky you will use it several times a day for the next few decades.
 
@@ -51,24 +52,24 @@ Let's solidify these with an example.  Say you wanted to change to your
 cd proejcts
 ```
 A typo!  For any moderately fast touch typist, it is faster to delete the
-misspelled word and start again.  So how do you delete the word behind your
-cursor?  Hold down backspace?  Hit backspace half-a-dozen times?  Both feel
-slow, so you decide to improve this part of your work.  You search
-'bash delete word behind cursor' and see that `Ctrl + w`
-is the chord to press.  You have spent the minutes to learn something new.
+entire misspelled word and start again.  So how do you delete the word behind
+your cursor?  Hold down backspace?  Hit backspace half-a-dozen times?  Both
+feel slow, so you decide to improve this part of your work.  You search 'bash
+delete word behind cursor' and see that `Ctrl + w` is the chord to press.  You
+have spent the minutes to learn something new.
 
 After lunch, you are back at the command line and make another typo.  How can
 you make sure you use `Ctrl + w` instead of reaching for backspace?  You have
 to change how backspace works to make it slower than stopping, remembering
-`Ctrl + w`, and hitting that instead.  I would recommend you increase your
-keyboard repeat delay and decrease the repeat rate.  Then when you hold down
+`Ctrl + w`, and hitting that instead.  *I would recommend you increase your
+keyboard repeat delay and decrease the repeat rate.*  Then when you hold down
 backspace, it will delete one character and sit there for a few seconds
 deleting a character at a time.  At this point, you should notice what's
 happening and stop to recall `Ctrl + w`.  Since this will also slow down using
 arrows to navigate, delete to delete forward, and `hjkl` to navigate in vim,
 here are some shortcuts to start practicing!
  - `Ctrl + a` and `Ctrl + e`: move to start/end of line
- - `Alt + b` and `Alt + f`: move back/forward a word
+ - `Alt + b`  and `Alt + f`: move back/forward a word
  - `Ctrl + w` and `Alt + d`: delete back/forward a word
  - `Ctrl + u` and `Ctrl + k`: delete entire line behind/ahead of cursor.
    I like to just hit `Ctrl + ku` to delete everything regardless of cursor
@@ -108,7 +109,7 @@ PS1='$(printf ''%-11.10s'' "${PWD##*/}")❯❯❯ '
 
 ```
 # in .inputrc
-# use partial search history with up and down arrows
+# use partial search history with C-p and C-n; up and down arrows
 "\C-p":history-search-backward
 "\C-n":history-search-forward
 
@@ -135,6 +136,13 @@ precisely.
    you to talk to the computer more precisely.
 
 ## What we will do
-The course will use tmux throughout to demonstrate some advanced command-line
+The course will use tmux throughout to demonstrate advanced command-line
 usage.  Once you are comfortable with tmux, you are ready to work on the
-exercises!
+exercises!  Each section will generate a tmux session containing exercises
+for practicing and exploring command behaviors.
+
+After tmux, we will cover a handful of useful commands that have a few
+features.  Next we will go over more advanced globbing, particularly to
+contrast with regular expressions.  The remainder of the course will cover
+regular expressions, in the context of grep, sed, and awk.  These commands will
+accelerate your ability to find, modify and calculate with data in files.

@@ -1,5 +1,4 @@
 # Advanced Globbing
-
 You should have some familiarity with wildcard expansion used in bash.  We
 will cover some more advanced glob syntax and, later, contrast this with
 regular expressions.  The `files` directory contains some targets to
@@ -21,7 +20,6 @@ file with a literal metacharacter, first, consider renaming the file and
 using a different scheme!  This is especially true for spaces in filenames
 since, by default, a space in bash separates arguments.  But if you must, you
 can escape a single character with `\` or surround the glob with single quotes.
-This glosses over more bash specifics unrelated to globbing.
 
 ## Wildcards
 The characters `*` and `?` are wildcards that match any character.  `*` will
@@ -41,9 +39,9 @@ ls 1*a*
 ```
 
 Note that since `*` matches 0 or more characters, `1*a*` matches `1.a`,
-`1a.img`, and `a.txt`.
+and `1a.img`.
 
-The utility with files is passing these expanded file lists to commands.
+The utility of globs is passing these expanded file lists to commands.
 Try calling `cat` on all the `.img` files or the `.a` files.  Don't
 underestimate the value of `?`.  When files are named sequentially it's useful
 for looking at just the files in the 30's, or 1-9.
@@ -57,7 +55,8 @@ Character sets are groups or ranges of characters that match to a single
 character in the output.  They are specified by listing the target characters
 in square braces.  The following produce identical results:
 ```
-cat [abc].txt  # matches a.txt, b.txt, or c.txt
+ls [abc].txt  # matches a.txt, b.txt, or c.txt
+cat !$  # recall last argument
 cat [abcd].txt  # d.txt doesn't exist
 cat [a-c].txt  # can use a range
 cat [bca].txt  # order not determined by glob
@@ -74,8 +73,9 @@ ls [!ab]*
 
 ### EXERCISE
 You want all files as long as an `a` doesn't appear anywhere in the filename.
-Does `ls *[!a]*` work?  What does this tell you about how the glob is evaluated?
-Does `*[!a]*` match a file called `a`?  (Use touch to create an empty file).
+Does `ls *[!a]*` work?  What does this tell you about how the glob is
+evaluated?  Does `*[!a]*` match a file called `a`?  (Use `touch a` to create an
+empty file).
 
 ## Character sequences
 Character sequences specify an exact set of values to replace.  They are less
@@ -103,22 +103,15 @@ cat {1..4,a..c}.txt  # ERROR
 cat {1..4}.txt {a..c}.txt  # works
 ```
 
-Using numeric ranges is much easier than try to list, sort, and process a
-set of files.  Character sequences can also be used as inputs to for loops.
+Using numeric ranges is much easier than trying to list, sort, and process a
+set of files.  Character sequences can also be used as inputs to for loops in a
+bash script.
 
 ## More options
-Bash offers more options to expand globbing that are off by default and make
-globs behave a little closer to a regular expression.  Before you look up and
-activate these options ask the following:
+Bash offers more options to expand globbing that are disabled by default and
+make globs behave a little closer to a regular expression.  Before you look up
+and activate these options ask the following:
  - Is a bash script the best tool for finding the files I need?  The work
    may be better suited for a python script with a full regex engine or `find`.
  - Why is my file pattern so complex?  Can I use subdirectories to better
    organize my files?
-
-As we venture further into sed, grep, and awk you will find you can do very
-complex processing from the command line.  Always be mindful that your bash
-history is ethereal.  The awk command from last month may no longer exist and
-with tmux sessions the command history becomes more convoluted.  If 1) your
-command is longer than 80 characters OR 2) will be run more than twice you
-should wrap it in a shell script and keep it under version control with the
-relevant project.  A fellow lab member or future you will be thankful you did!

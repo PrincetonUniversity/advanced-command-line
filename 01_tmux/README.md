@@ -15,15 +15,14 @@ There are some breaking changes in syntax between versions, so be careful
 with `.tmux.conf` when moving between servers.
 
 ## Sessions
-When you connect to a remote server, your shell is running on one process
-on the server.  If you open another terminal and connect again, you will
-have two shells running on separate processes.  tmux sessions allow you to
-open multiple "connections" to the server without having to ssh again.
-When you are done with a session, you can kill it or detach.
-As long as the server doesn't shut down, detached sessions persist, can be
-reattached, and continue running processes.  You can keep separate sessions
-for projects or just use them to pick up your work between logging off or when
-your vpn client disconnects.
+When you connect to a remote server, your shell is running on one process on
+the server.  If you open another terminal and connect again, you will have two
+shells running on separate processes.  tmux sessions allow you to open multiple
+"connections" to the server without having to ssh again.  When you are done
+with a session, you can kill it or detach.  As long as the server doesn't shut
+down, detached sessions persist, can be reattached, and continue running
+processes.  You can keep separate sessions for projects or just use them to
+pick up your work between logging off or when your vpn client disconnects.
 
 Give tmux a shot by starting a new session and detaching.
 ```
@@ -35,10 +34,10 @@ Run a command to test it out:
 echo "Hello tmux"
 ```
 Hit `Ctrl + b` then `?` (will be notated as `C-b ?` in the future) to see all
-the commands available.  Where you see `prefix`, means the prefix key,
-`C-b` by default, though `C-a` is a common binding.  You can search for a 
-word by pressing `/` and typing the word.  Search for `detach`.  You should
-see something like:
+the commands available.  `prefix` means the prefix key, `C-b` by default,
+though `C-a` is a common binding to mimic `screen`.  You can search for a word
+by pressing `/` and typing the word.  Search for `detach`.  You should see
+something like:
 ```
 C-b d       detach-client
 # or
@@ -51,8 +50,9 @@ To reattach to a session, type `tmux a`.  This reattaches to the most recent
 session.  You should see `Hello tmux` from the last echo.
 
 To terminate a session, type `C-d` to signal end of file.  This is a shell
-thing, not tmux specific and used to exit a connection.  If you now type
-`tmux a`, you should get an error that there are no sessions to connect to.
+convention, not tmux specific and is used to exit a connection.  If you now
+type `tmux a`, you should get an error that there are no sessions to connect
+to.
 
 *This is my usage with sessions.  I keep one session and run `tmux a` when I
 first log in.  Projects are separated by windows (explained below).*  
@@ -73,7 +73,7 @@ Take a moment to practice starting, detaching, killing and reattaching
 sessions.  If you need a long running command, you can use `slow_process.sh` in
 this directory.
 
-Try the following series of commands to practice.
+Try the following series of commands in another terminal window.
 
 ```bash
 tmux new -s manualPrint
@@ -103,9 +103,10 @@ in the same window.  Here is a mapping of terminology:
  - tmux session -> Browser window 
  - tmux window -> Browser tab
  - tmux pane -> Not typical
+
 For brevity, when I say window I am referring to a tmux window.
 
-Let's try working with a few windows and panes:
+Let's try working with a few windows:
 ```bash
 tmux  # new session
 echo Window 0
@@ -148,7 +149,7 @@ source-file ~/.tmux.conf  # this runs the source-file command and supplies the f
 You can also add the following to your `~/.tmux.conf` to make re-sourcing faster:
 ```
 # Reload tmux config
-bind r source-file ~/.tmux.conf
+bind r source-file ~/.tmux.conf \; display-message "Config reloaded..."
 ```
 
 Practice moving around with `C-b n/p` and `S-Left/Right`.  If you don't like
@@ -163,8 +164,8 @@ I find this distracting and not very informative.  Add the following to your
 # Automatically set window title
 set-window-option -g allow-rename off
 set-option -g set-titles on
-bind-key , command-prompt "rename-window '%%'"
-bind-key c command-prompt -p "window name:" "new-window; rename-window '%%'"
+bind , command-prompt "rename-window '%%'"
+bind c command-prompt -p "window name:" "new-window; rename-window '%%'"
 
 # prevent updates to shell from changing window titles
 setw -g monitor-activity off
@@ -174,11 +175,11 @@ will persist.  If you want to rename a window, you can use `C-b ,`.  Create
 some new windows with names and rename some existing windows.
 
 ## Panes
-Panes allow you to split a window into multiple shells and view them simultaneously.
-Maybe you need to view an input file while editing a script to process it or
-you want to check resource usage with `htop` while running some code.  I tend to
-split my screen to have an editor open on one half and use the other for running
-code and navigating the file system.
+Panes allow you to split a window into multiple shells and view them
+simultaneously.  Maybe you need to view an input file while editing a script to
+process it or you want to check resource usage with `htop` while running some
+code.  I tend to split my screen to have an editor open on one half and use the
+other for running code and navigating the file system.
 
 ### EXERCISE
 Let's practice some panes, in a tmux window:
@@ -191,20 +192,20 @@ echo pane the third
 ```
 To work with panes, the defaults are:
 ```
-C-b <ARROW>  # move in the direction of the arrow
-C-b q  # display pane numbers, press the corresponding number to move to that pane
-C-b { and C-b}  # swap the panes
-C-b z  # zoom in the pane (make full window)
-C-b x  # kill active pane
-C-d  # end of file, exit pane
+C-b <ARROW>         # move in the direction of the arrow
+C-b q               # display pane numbers, press a number to move to that pane
+C-b { and C-b }     # swap panes
+C-b z               # zoom in on pane (make full window)
+C-b x               # kill active pane
+C-d                 # end of file, exit pane
 ```
 
 I can't use these defaults and prefer something closer to vim.  The relevant
 lines in my .tmux.conf are:
 ```
 # Change window splits to match vim
-bind-key v split-window -h
-bind-key s split-window -v
+bind v split-window -h
+bind s split-window -v
 
 # Vim style pane selection
 bind h select-pane -L
@@ -222,10 +223,10 @@ bind -n M-l select-pane -R
 # See: https://github.com/christoomey/vim-tmux-navigator
 is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
     | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
-bind-key -n M-h if-shell "$is_vim" "send-keys M-h"  "select-pane -L"
-bind-key -n M-j if-shell "$is_vim" "send-keys M-j"  "select-pane -D"
-bind-key -n M-k if-shell "$is_vim" "send-keys M-k"  "select-pane -U"
-bind-key -n M-l if-shell "$is_vim" "send-keys M-l"  "select-pane -R"
+bind -n M-h if-shell "$is_vim" "send-keys M-h"  "select-pane -L"
+bind -n M-j if-shell "$is_vim" "send-keys M-j"  "select-pane -D"
+bind -n M-k if-shell "$is_vim" "send-keys M-k"  "select-pane -U"
+bind -n M-l if-shell "$is_vim" "send-keys M-l"  "select-pane -R"
 ```
 The `vim-tmux-navigator` plugin provides seamless navigation between vim
 windows and tmux panes.  The installation instructions provide some reasonable
@@ -244,13 +245,13 @@ encountered a very common use case.
  - In the other, run `ps -aux` to get all running processes
 
 `ps` will spit out all of the processes running on the head node and since
-we didn't pipe the outputs, it will scroll over multiple screens.  Your
+we didn't pipe the outputs, it will scroll over multiple screens.  Your tmux
 terminal doesn't have a scroll bar, so how do we see the input?  If you want
 to copy and paste multiple lines from the ps output, you will notice the
 selection covers both panes, also not what you want!
 
-To scroll and copy/paste, we will use copy mode.  The defaults naviagation keys
-are similar to emacs/bash, but if you prefer vim-like naviation, add the
+To scroll and copy/paste, we will use copy mode.  The default navigation keys
+are similar to emacs/bash, but if you prefer vim-like navigation, add the
 following to your .tmux.conf and re-source:
 ```
 setw -g mode-keys vi
@@ -259,9 +260,10 @@ set -g status-keys vi
 
 To enter copy mode, press `C-b [`.  This will make the currently selected pane
 behave like a file and allow you to navigate and copy its content.  Use the
-arrow keys (or hjkl in vim mode) to move around and  `C-r` (or /? in vim mode)
-to search for a string.  Word-wise movements are also supported as are `C-u/d`
-to make larger jumps through the buffer.  Hitting `q` will exit copy mode.
+arrow keys (or hjkl in vim mode) to move around and  `C-r` (or `/` or `?` in
+vim mode) to search for a string.  Word-wise movements are also supported as
+are `C-u/d` to make larger jumps through the buffer.  Hitting `q` will exit
+copy mode.
 
 To start selecting text, press `Space`.  This anchors the current cursor
 position and allows you to move the cursor to specify the other end point.
@@ -270,15 +272,16 @@ selection and copy the selected text, press `C-w` (or `Enter`).
  - Search for a process with your user name and copy a few lines around it
    into the default buffer.
 
-tmux keeps 50 buffers that can be specified or named.  I usually just use
-one buffer, similar to the system clipboard.  To paste the contents of the 
-default buffer at the current cursor location, press `C-b ]`.  Paste the
-contents of the buffer into your editor (you have to enter insert mode in vim)
+tmux keeps 50 buffers that can be specified or named.  I usually just use one
+buffer, similar to the system clipboard.  To paste the contents of the default
+buffer at the current cursor location, press `C-b ]`.  Paste the contents of
+the buffer into your editor (you have to enter insert mode in vim).
 
-You can remap the keys to perform this actions, but the syntax changed in
-version tmux 2.3.  You can also have tmux interact with the system clipboard,
-the vim registers `*` and `+`, or use the mouse for selection.  Search for
-specifics if you are interested.
+You can remap the keys to perform select, copy and paste, but the syntax
+changed in version tmux 2.3.  Note the tmux buffer and your system clipboard
+(where `C-c` goes) are distinct.  You can have tmux interact with the
+system clipboard, the vim registers `*` and `+`, or use the mouse for
+selection.  Search for specifics if you are interested.
 
 ## Conclusions
 This section covers a lot of tmux usage.  Don't try to use everything at once!
