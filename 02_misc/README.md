@@ -3,6 +3,20 @@
 This section contains miscellaneous commands that I use frequently which aren't
 large enough to be stand alone topics.
 
+The setup script in this section downloads 6 files we will work with in the
+following sections.
+ - metamorphosis.txt: The Metamorphosis by Franz Kafka from project gutenberg
+ - words.txt: The list of words commonly found on unix systems for use with
+   spell check programs.
+ - word\_counts.txt: alphabetically sorted list of words with their
+   frequencies.
+ - sample.fasta: A sample file with amino acid sequences
+ - human.chrom.sizes: A table of hg19 contigs and their associated sizes
+
+The last three files are common formats in bioinformatics and are examples of
+structured text.
+
+
 ## bc
 The basic calculator has its own programming language and allows for arbitrary
 precision in calculations.  Its syntax is similar to C and has builtin
@@ -249,9 +263,45 @@ always want to use the option `-3` to suppress the common output column.
 
 ### EXERCISE
 Run the following commands to understand the output of `comm`.  We will cover
-sed in a later section, so just copy the commands for now.
+sed in a later section, so just copy the commands for now.  They delete the
+third line and change 'ment' to 'mont'
 ```
 comm <(head words.txt) <(head words.txt | sed '3d ; s/ment/mont/')
 comm -3 <(head words.txt) <(head words.txt | sed '3d ; s/ment/mont/')
+```
 
-watch and entr
+## watch and entr
+After you have used tmux for a while, you may notice yourself working on a
+file, saving your change, going to another pane to press `C-p ENTER` to run
+something.  Or maybe you are repeatedly checking a job on the slurm queue.
+Any time you are simply repeating the last command, you could use `watch` or
+`entr` to do it automatically!
+
+`watch` is a standard command that is present on RC clusters.  It allows you
+to invoke a command every `n` seconds.
+
+## EXERCISE 
+Try these sample `watch` commands.  Exit `watch` with `C-c`.
+```
+watch -n 5 date  # run date every 5 seconds
+watch -n 10 squeue -u $USER  # pool squeue every 10 seconds
+watch -n 5 'ls -lth *'
+```
+
+While `squeue` has a `-i` option to repeated print the output, `watch` also
+clears the screen.  If you need to use glob expansions, wrap the command
+in single quotes.
+
+`entr` is not standard but much more powerful.  Instead of repeatedly
+executing a command, `entr` waits for one or more files to change before
+performing the command. For example
+```
+find -name '*.py' | entr -c bash -c 'sleep 1 && pytest'
+```
+runs pytest any time a `.py` file is changed in the current directory
+structure.  Combined with tmux, you can simulate a lot of IDE capabilities
+with command line editors.
+
+You can install entr as a user on the RC clusters.  To learn more, visit
+the [entr homepage](http://eradman.com/entrproject/).  You will have to change
+the prefix to your local bin directory.  We will not cover this here.

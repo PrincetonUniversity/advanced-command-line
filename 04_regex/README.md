@@ -83,18 +83,6 @@ egrep -e cat -e dog FILE
 ```
 Will find lines with cat OR dog in them.
 
-The setup script in this section downloads 6 files to work with:
- - metamorphosis.txt: The Metamorphosis by Franz Kafka from project gutenberg
- - words.txt: The list of words commonly found on unix systems for use with
-   spell check programs.
- - word\_counts.txt: alphabetically sorted list of words with their
-   frequencies.
- - sample.fasta: A sample file with amino acid sequences
- - human.chrom.sizes: A table of hg19 contigs and their associated sizes
-
-The last three files are common formats in bioinformatics and are examples of
-structured text.
-
 ## Literals, Metacharacters, and Anchors
 Like globs, characters in regexes are either taken literally or have a special
 meaning and are called metacharacters.  For now, we will say all alpha-numeric

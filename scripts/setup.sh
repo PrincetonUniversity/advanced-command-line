@@ -19,6 +19,7 @@ if [[ ! -d $target ]]; then
     exit
 fi
 
+# add full path and remove trailing `/` from current file
 awk_script=$PWD/${0%/*}/parse_exercise.awk
 cd $target
 
@@ -47,15 +48,17 @@ tmux new-session \
     -s $name \
     -n README \
     -d \
-    $viewer README.md
+    "$viewer README.md"
 
 # parse out exercises into separate windows with a split pane
 ex_num=1
 while true ; do
+    # if awk produces no output, exit loop
     if [[ -z $(awk -f $awk_script -v target=$ex_num README.md) ]] ; then
         break
     fi
-    cmd="awk -f $awk_script -v target=$ex_num README.md | less"
+    # capture command to start tmux window with
+    cmd="awk -f $awk_script -v target=$ex_num README.md | $viewer -"
     tmux new-window \
         -n "Exercise $ex_num" \
         "$cmd" \; \
@@ -64,9 +67,10 @@ while true ; do
     ex_num=$(($ex_num + 1))
 done
 
+# Select first window
 tmux select-window -t ^
 
 # change to original directory, no printout
-cd - >/dev/null
+cd - > /dev/null
 
 echo tmux session $name created with $ex_num exercises
