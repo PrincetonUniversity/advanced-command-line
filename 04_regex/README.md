@@ -83,6 +83,12 @@ egrep -e cat -e dog FILE
 ```
 Will find lines with cat OR dog in them.
 
+### git grep
+If you work in repositories with large build artifacts or involved `.gitignore`
+files, `git grep -E` is a good replacement for `egrep` as it searches only
+tracked files in a git repo.  You can even consider aliasing `egrep` to use
+`git grep -E`.
+
 ## Literals, Metacharacters, and Anchors
 Like globs, characters in regexes are either taken literally or have a special
 meaning and are called metacharacters.  For now, we will say all alpha-numeric
