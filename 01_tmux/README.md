@@ -94,6 +94,19 @@ tmux a -t autoPrint
 tmux a  # will error
 ```
 
+### If you get stuck
+While working with tmux, if you get to a point where you need to quit, you
+can try some of the following:
+```
+C-b d  # detach session
+tmux kill-session  # kill most recent session
+# OR
+C-b :  # open tmux console
+kill-session  # kill the current session
+```
+If you exit your terminal to disconnect from the server, the tmux session
+will stay active.
+
 ## Windows
 Each tmux session can contain one or more windows, which contain one or more
 panes.  Each pane has an independent shell process.  If you use vim, a vim

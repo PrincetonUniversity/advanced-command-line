@@ -25,6 +25,7 @@ cd $target
 
 # get dir basename
 name=${target%/}
+setup_script=$name/setup_files.sh
 name=${name##*/}
 
 # set viewer if provided
@@ -40,7 +41,9 @@ fi
 
 # run setup script in target
 echo Starting setup
-./setup_files.sh
+mkdir -p /tmp/$USER/210119-ACL/$name
+cd /tmp/$USER/210119-ACL/$name
+$setup_script
 
 # setup new session with view of readme
 echo Creating session

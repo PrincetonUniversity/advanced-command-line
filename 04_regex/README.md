@@ -228,6 +228,15 @@ egrep '[aeiou]{5}' words.txt
 Search `words.txt` for exactly 4 vowels in a row.  If you match 'queueing',
 the regex is too general.  If you don't see 'dequeue' it is too restrictive.
 
+### EXERCISE
+Solve the following word jumbles by matching against `words.txt`.  The given
+letters should be permuted to form an English word:
+```
+flatao
+ruyrh
+psrgurisuinn
+```
+
 A range is specified like so:
 ```
 egrep 'a{1,3}' words.txt  # match between 1 and 3 a's, inclusive
@@ -332,6 +341,7 @@ Some useful topics to research on your tool of interest are:
  - Case insensitive matching
  - Word boundaries
  - Non-capturing parentheses
+ - `ag` and `ack` as `grep` alternatives.
 
 ### General special/normal extraction
 Consider the more challenging problem of matching text in quotations
@@ -355,7 +365,8 @@ You should be extremely careful with such regexes!  Some regex engines need to
 evaluate every possible assignment before declaring a string does not match.
 Since there is ambiguity in where a character falls (does it belong to `+` or
 `*`?) the number of possibilities increases exponentially with the size of the
-string!  An efficient and non-exponential version is `"[^\\"]*(\\.[^\\"]*)*"`.
+string!  This is known as catastrophic backtracking. An efficient and
+non-exponential version is `"[^\\"]*(\\.[^\\"]*)*"`.
 
 The general form is `opening normal* (special normal*)* closing` where:
  - normal is more common than special, though both are allowed in the sequence

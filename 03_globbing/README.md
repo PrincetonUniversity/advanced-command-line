@@ -1,4 +1,4 @@
-# Advanced Globbing
+# Globbing
 You should have some familiarity with wildcard expansion used in bash.  We
 will cover some more advanced glob syntax and, later, contrast this with
 regular expressions.  The `files` directory contains some targets to

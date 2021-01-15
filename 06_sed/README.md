@@ -229,9 +229,10 @@ A common command is `sed '/^$/d'` to delete blank lines in a file.
 
 ### EXERCISE
  - Create an outline of `02_misc/README.md` by printing only lines that start
-   with `#` and substituting `#` with a tab or two spaces.
- - Try to delete all block code sections in this README.  Remember ranges can
-   accept regular expressions.
+   with `#` and substituting `#` with a tab or two spaces.  You will have to
+   navigate to this repository as the tmux script puts you in `/tmp`.
+ - Try to delete all block code sections in `02_misc/README.md` .  Remember
+   ranges can accept regular expressions.
  - Combine the two commands to get a clean outline
 
 ### Quit
