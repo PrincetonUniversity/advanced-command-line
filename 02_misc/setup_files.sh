@@ -1,6 +1,9 @@
 #!/bin/bash
 
-rm -rf files
+if [[ -d files ]]; then
+    exit
+fi
+
 mkdir -p files
 cd files
 

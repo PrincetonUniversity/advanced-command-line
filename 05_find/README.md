@@ -137,7 +137,7 @@ match and `-l` just prints the matching files.
 ```
 grep -r cat wide  # search the regex `cat` in all files in the wide directory
 grep -nr cat wide  # report line numbers of matches
-grep -nl cat wide  # report just file names with matches
+grep -rl cat wide  # report just file names with matches
 ```
 
 ### EXERCISE
@@ -177,7 +177,8 @@ above with `i`, the search becomes case-insensitive, e.g. `-iname`.
  - Search for the file `text.txt`.  Use command substitution and cat to display
    the contents.
  - Do you have any files with 3 vowels in a row?  You may have to change the
-   `-regextype` to egrep or escape your braces if you are using quantifiers.
+   `-regextype` to `posix-egrep`  or escape your braces if you are using
+   quantifiers.
 
 ## Operators
 Expressions can be combined to generate more complex matching criteria.  By

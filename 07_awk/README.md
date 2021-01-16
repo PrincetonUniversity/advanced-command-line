@@ -146,15 +146,15 @@ Work through the following commands to see how `OFS` is utilized with `$0`.
 ```
 head human.chrom.sizes
 # space between strings is used for concatenation
-head human.chrom.sizes | awk 'BEGIN{OFS=","} {print $1 $2}
+head human.chrom.sizes | awk 'BEGIN{OFS=","} {print $1 $2}'
 # using a comma specifies separate arguments to print OFS
-head human.chrom.sizes | awk 'BEGIN{OFS=","} {print $1, $2}
+head human.chrom.sizes | awk 'BEGIN{OFS=","} {print $1, $2}'
 # printing entire line
-head human.chrom.sizes | awk 'BEGIN{OFS=","} {print}
+head human.chrom.sizes | awk 'BEGIN{OFS=","} {print}'
 # rebuilding $0 by setting $1
-head human.chrom.sizes | awk 'BEGIN{OFS=","} {$1=$1; print}
+head human.chrom.sizes | awk 'BEGIN{OFS=","} {$1=$1; print}'
 # set ORS
-head human.chrom.sizes | awk 'BEGIN{OFS=","; ORS="<>"} {$1=$1; print}
+head human.chrom.sizes | awk 'BEGIN{OFS=","; ORS="<>"} {$1=$1; print}'
 # C-l to clear screen
 ```
 
@@ -215,7 +215,7 @@ Patterns may be:
  - `/regex/` perform action when the regex matches.  Can negate like `!/regex/`
  - Boolean expression.  Examples are testing specific fields for equality or
    pattern matching (using `~` and `!~`).
- - A range, similar to sed.
+ - A range, similar to sed without using line numbers.
 
 All patterns are evaluated for each record unless the command `next` is
 encountered, which causes execution to resume with the next record.
@@ -242,8 +242,8 @@ print "std", sqrt((sqr - total**2 / NR) / (NR-1))}' word_counts.txt
 ```
 
 ## Conditionals and loops
-As you may expect, awk has support for if, else, for, while, and do.
-The syntax for conditionals is
+As you may expect from a scripting language, awk has support for if, else, for,
+while, and do.  The syntax for conditionals is
 ```
 if (condition) {
 statement1;
@@ -363,7 +363,7 @@ awk '$1 ~ /^chr[[:digit:]]{1,2}$/{print > "autosomes.out" ; next}
 
 It is also worth mentioning the commands `split` to split files based on size
 or number of lines, and `csplit` to split files based on regular expressions.
-However, neither would work properly for the parts of speech splitting.
+However, neither would work properly for the presented examples.
 
 ## More functions
 awk has several built in functions for mathematical operations and string
@@ -374,7 +374,8 @@ printf.
 
 ### BONUS EXERCISE
 Repeat the word counting of `metamorphosis.txt` but remove leading and trailing
-punctuation and cast everything to lowercase.
+punctuation and cast everything to lowercase.  Search how to perform string
+substitution in awk.
 
 ## Closing
 I hope you have an appreciation for the utility of regular expressions to

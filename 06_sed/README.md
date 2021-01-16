@@ -40,13 +40,13 @@ Try the following sed commands.
 ```
 head -n 15 metamorphosis.txt
 head -n 15 metamorphosis.txt | sed 's/Kafka/Ferdinand/'
-head -n 15 metamorphosis.txt | sed 's/Kafka/Wyllie/ ; s/Wyllie/Willy'
+head -n 15 metamorphosis.txt | sed 's/Kafka/Wyllie/ ; s/Wyllie/Willy/'
 head -n 15 metamorphosis.txt | sed 's/it/Metamorphosis/'
 head -n 15 metamorphosis.txt | sed -n 's/it/Metamorphosis/p'
 head -n 15 metamorphosis.txt | sed -n 's/it/Metamorphosis/gp'
 head -n 15 metamorphosis.txt | sed -n 's/\<it\>/Metamorphosis/gp'
 head -n 15 metamorphosis.txt | sed -E 's/([A-Z])/+\1+/g'
-head -n 15 metamorphosis.txt | sed -i 's/gutenberg/Gutenburg/'
+head -n 15 metamorphosis.txt | sed 's/gutenberg/Gutenburg/i'
 ```
 
 You should have noticed:
@@ -66,13 +66,14 @@ You should have noticed:
  - The REPLACEMENT has a limited set of metacharacters.  `+*.` and more can be
    used without escaping.  Back reference is supported and therefore `\` must
    be escaped if you want a literal `\`.
- - The sed option `-i` makes the matching case-insensitive.
+ - The flag `i` makes the matching case-insensitive.
 
 You can also invoke sed on the entire file like so:
 ```
 sed 's/Kafka/KAFKA/' metamorphosis.txt
 ```
-Multiple file arguments are processed as if concatentated.
+Multiple file arguments are processed as if concatentated unless the `-i`
+option is specified.  Look into the man page for more information.
 
 ### EXERCISE
 The `human.chrom.sizes` contains several contigs besides the sex chromosomes
@@ -104,11 +105,11 @@ and then a protein or nucleic acid sequence below.
  - Print only the headers.
  - Print only the headers and mark the start and end of the line with `^` and
    `$`.
- - Print only the headers, trim any whitespace, and mark the start and end of
-   the line with `^` and `$`.
- - Print the entry for `crab_human`.  You may have to pipe the output through
-   head.
- - Remove the last `.` from the header lines
+ - Print only the headers, trim trailing whitespace, and mark the start and end
+   of the line with `^` and `$`.
+ - Print the header and entry for `crab_human`.  You may have to pipe the
+   output through head.
+ - Remove the last `.` from the header lines, print all lines.
  - Replace all occurrences of `ST` with `*st*`, but only in the header lines.
  - For each non-header line, highlight palindromes of length 5 with a `*` to
    either side.
@@ -143,6 +144,9 @@ The flag `g` substitutes each occurrence of target on the line.  You can also
 specify a number to replace the i'th occurrence of a target.  To replace the
 third tab in a tsv with a comma, you would use `s/\t/,/3`.
 
+The flag `m` makes the regex match in multi-line mode, which is useful for
+unstructured text.
+
 ### Transform
 Transform, `y`,  performs character-wise replacements of a set of characters.
 This is similar to the `tr` command with fewer features.  A sample command is
@@ -157,7 +161,7 @@ You can use print as a standalone flag to perform some common tasks similar to
 `grep` or `head`.
 ```
 sed -n '1,10p'   # print first 10 lines of file
-sed -n '5p'      # print 5th line
+sed -n '5p ; 17p ; 22p'      # print 5th, 17th, and 22nd line
 sed -n '/cat/p'  # print lines with 'cat', like grep
 ```
 Note that if the `-n` option is omitted, the desired lines will be printed
@@ -169,7 +173,7 @@ trimming exercise from above, you could run:
 ```
 sed -nE '/^>/{
 p
-s/[[:space:]]+//
+s/[[:space:]]+$//
 p
 s/^/^/
 p
@@ -193,7 +197,7 @@ sed -n '/^>/{=;p}' sample.fasta
 ### EXERCISE
 `metamorphosis.txt` contains three sections, `I`, `II`, and `III` signified
 by a line containing those numerals followed by some space.  Write a sed
-command to print the line numbers of each section.  Also look into `grep -n`.
+command to print the line numbers of each section.  Also consider `grep -n`.
 
 ### Next
 The next command reads the next line of the file into the line buffer.  It
@@ -211,8 +215,8 @@ sed -n '/^>/{N;s/A/@/g;p}' sample.fasta
 ```
 
 As you can see, `N` can be helpful with multiline substitutions and can perform
-matches across lines.  Generally, perl-style regexes are more useful for
-multiline regex operations.
+matches across lines.  Generally, perl-style regexes or the `-m` option are
+more useful for multiline regex operations.
 
 ### Delete
 The delete command clears the line buffer.  Any commands after delete are not
@@ -222,7 +226,7 @@ lines in `sample.fasta`
 sed '/^>/d' sample.fasta
 sed '/^>/{d;p;s/>/#/}' sample.fasta
 ```
-The commands are identical.  For the second, once the delete command is
+The commands are identical.  For the second example, once the delete command is
 performed, neither print nor substitute are executed.
 
 A common command is `sed '/^$/d'` to delete blank lines in a file.
@@ -247,7 +251,10 @@ The `q` variant prints the contents of the line buffer before quiting, `Q`
 exits immediately.
 
 You can also use quit to improve efficiency of a sed command by exiting
-once a match is no longer possible.
+once a match is no longer possible, for example printing the first 10 lines
+```
+sed '10q' metamorphosis.txt
+```
 
 ### Advanced commands
 sed also has the ability to store lines and perform branching execution,

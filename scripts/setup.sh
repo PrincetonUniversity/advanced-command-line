@@ -25,7 +25,8 @@ cd $target
 
 # get dir basename
 name=${target%/}
-setup_script=$name/setup_files.sh
+target=$PWD
+setup_script=$PWD/setup_files.sh
 name=${name##*/}
 
 # set viewer if provided
@@ -41,17 +42,21 @@ fi
 
 # run setup script in target
 echo Starting setup
-mkdir -p /tmp/$USER/210119-ACL/$name
-cd /tmp/$USER/210119-ACL/$name
+file_dir=/tmp/$USER/210119-ACL/$name
+mkdir -p $file_dir
+cd $file_dir
 $setup_script
 
 # setup new session with view of readme
+cd $target
 echo Creating session
 tmux new-session \
     -s $name \
     -n README \
     -d \
     "$viewer README.md"
+tmux split-window -h \; \
+    send-keys "cd $file_dir/files " C-m
 
 # parse out exercises into separate windows with a split pane
 ex_num=1
@@ -66,12 +71,12 @@ while true ; do
         -n "Exercise $ex_num" \
         "$cmd" \; \
     split-window -h \; \
-    send-keys "cd files " C-m
+    send-keys "cd $file_dir/files " C-m
     ex_num=$(($ex_num + 1))
 done
 
 # Select first window
-tmux select-window -t ^
+tmux select-window -t:+1
 
 # change to original directory, no printout
 cd - > /dev/null

@@ -134,7 +134,8 @@ Note especially the regex `^`.  The phrase 'anchor' is slightly misleading
 as we aren't actually anchoring anything with the match.  Instead we are
 literally asking for the beginning of the line.  A verbose reading of `^cat`
 would be "the beginning of the line, the letter c, the letter a, and the letter
-t."  It is a subtle difference but will prevent confusion later.
+t."  It is a subtle difference but will prevent confusion later, when trying
+to append a string to a line.
 
 ## Character Classes
 Similar to globbing, a set of characters in square brackets represent as set of
@@ -190,6 +191,10 @@ Search for words in `words.txt` that contain part of your name again, this
 time replacing characters with a `.`.  Note that when the `.` is at the start
 or end of the regex, it still has to match *some* character.
 
+### EXERCISE
+You are playing hangman and the board is `_ _ a _ g _ _ _ _ d`, solve the
+puzzle!
+
 A similar concept to character classes are alternation, `|`.  Tokens on either
 side of the alternation are taken as valid matches for the regex.
 ```
@@ -236,6 +241,7 @@ flatao
 ruyrh
 psrgurisuinn
 ```
+HINT: use character classes and quantifiers.
 
 A range is specified like so:
 ```
