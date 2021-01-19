@@ -36,8 +36,8 @@ echo "Hello tmux"
 Hit `Ctrl + b` then `?` (will be notated as `C-b ?` in the future) to see all
 the commands available.  `prefix` means the prefix key, `C-b` by default,
 though `C-a` is a common binding to mimic `screen`.  You can search for a word
-by pressing `/` and typing the word.  Search for `detach`.  You should see
-something like:
+by pressing `C-r` (`/` with vim bindings) and typing the word.  Search for `detach`.  
+You should see something like:
 ```
 C-b d       detach-client
 # or
