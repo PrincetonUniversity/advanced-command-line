@@ -278,7 +278,7 @@ vim mode) to search for a string.  Word-wise movements are also supported as
 are `C-u/d` to make larger jumps through the buffer.  Hitting `q` will exit
 copy mode.
 
-To start selecting text, press `Space`.  This anchors the current cursor
+To start selecting text, press `C-Space`.  This anchors the current cursor
 position and allows you to move the cursor to specify the other end point.
 Unlike using a mouse, the selection is kept within a pane.  To confirm the
 selection and copy the selected text, press `C-w` (or `Enter`).
