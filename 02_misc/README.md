@@ -17,7 +17,7 @@ structured text.
 
 From the base directory,
 ```
-scripts/setup.sh 02_misc/
+./scripts/setup.sh 02_misc/
 ```
 will setup a tmux session with each exercise as a separate window.  `setup.sh`
 also accepts a second argument with the viewer to load each exercise with
@@ -89,7 +89,7 @@ Because some cell contents are larger than others, the layout is hard to read.
 A useful command to align columns is `column`.  With no arguments, `column`
 interprets the contents as entries to make into columns, effectively placing
 everything on one line matching the width of the terminal.  `column -t`,
-however, nicely spaces the contents assuming blank space delimits rows.
+however, nicely spaces the contents assuming blank space delimits columns.
 ```
 sed '/^##/d' sample.vcf | column -t
 # may need to press `C-b z` to make pane full window
@@ -152,7 +152,8 @@ We also just learned about paste, which can combine two or more files together
 so how do we pipe two cut commands into a paste command?  You could use
 named pipes, but bash has a nice shortcut called process substitution.
 When you place a process in `<(CMD)` it acts as a file containing the stdout
-of `CMD`.  Similarly, `>(CMD)` can be used for piping output to a command.
+of `CMD`.  Similarly, `>(CMD)` can be used for piping output to a command, like
+`>(sort | uniq -c > out.txt)`.
 
 So to print our vcf, we can use
 ```
@@ -218,7 +219,7 @@ it is time to move to an editor.  Recall the last command with `C-p` or the
 up arrow, then type `C-xC-e` to open your editor with the current command.
 Again, save and close to run the command.
 
-`fc` and the `C-xC-e` chord are nice ways to use the full editor power on a
+`fc` and the `C-xC-e` chord are nice ways to use your full editor power on a
 command you don't to keep around.
 
 ## cmp, diff and comm
@@ -226,7 +227,7 @@ The commands `cmp`, `diff` and `comm` all compare two files to find
 differences.  During development, I will frequently have a 'ground truth'
 file that I want to ensure is still produced when I modify some source code.
 This is called an acceptance test and is a good practice to make sure code
-runs as expected on actual data.
+runs as expected on non-trivial data.
 
 To check if two files match, simply use `cmp FILE1 FILE2`.  `cmp` will check
 that the bytes in each file match and will print an error on the first
@@ -262,9 +263,9 @@ first file because the line is missing in the second.
 `diff` has a few issues for use in debugging.  Usually you only care about the
 first difference as that's what you need to correct to get the test to pass.
 However, `diff` will generate the entire diff before printing anything, even
-if you pipe through head.  Say you have a difference on line 2 between two
+if you pipe through head.  Say you have a difference on line 3 between two
 GB-sized files; diff will find all differences before reporting the difference
-on line 2.  I would recommend running cmp first to get an idea of where the
+on line 3.  I would recommend running cmp first to get an idea of where the
 files differ and then pipe your inputs through head to get just the first
 part of the differences.
 ```
@@ -304,7 +305,7 @@ to invoke a command every `n` seconds.
 Try these sample `watch` commands.  Exit `watch` with `C-c`.
 ```
 watch -n 5 date  # run date every 5 seconds
-watch -n 10 squeue -u $USER  # pool squeue every 10 seconds
+watch -n 10 squeue -u $USER  # poll squeue every 10 seconds
 watch -n 5 'ls -lth *'
 ```
 
@@ -319,8 +320,12 @@ performing the command. For example
 find -name '*.py' | entr -c bash -c 'sleep 1 && pytest'
 ```
 runs pytest any time a `.py` file is changed in the current directory
-structure.  Combined with tmux, you can simulate a lot of IDE capabilities
-with command line editors.
+structure.
+```
+ls command.sh | entr -c bash -c 'sleep 1 && ./command.sh'
+```
+runs the `command.sh` script whenever it changes. Combined with tmux, you can
+simulate a lot of IDE capabilities with command line editors.
 
 You can install entr as a user on the RC clusters.  To learn more, visit
 the [entr homepage](http://eradman.com/entrproject/).  You will have to change

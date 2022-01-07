@@ -2,7 +2,7 @@
 tmux is a terminal multiplexer, allowing you to run other terminals inside of
 it.  Through sessions, tmux helps you keep processes running while logged out
 of a cluster, as long as the server is running.  You can do a lot with tmux,
-but we will focus on it's use as a session manager for remote servers and as a
+but we will focus on its use as a session manager for remote servers and as a
 window manager.
 
 ## Installation
@@ -50,9 +50,9 @@ To reattach to a session, type `tmux a`.  This reattaches to the most recent
 session.  You should see `Hello tmux` from the last echo.
 
 To terminate a session, type `C-d` to signal end of file.  This is a shell
-convention, not tmux specific and is used to exit a connection.  If you now
-type `tmux a`, you should get an error that there are no sessions to connect
-to.
+convention, not tmux specific and is used to exit an ssh connection or stop
+reading from stdin.  If you now type `tmux a`, you should get an error that
+there are no sessions to connect to.
 
 *This is my usage with sessions.  I keep one session and run `tmux a` when I
 first log in.  Projects are separated by windows (explained below).*  
@@ -140,14 +140,14 @@ of the following chords:
  Depending on your usage, this may be fine.  If you are working on a small
  screen, you may prefer to have a project per session and multiple windows to
  move between.  The default mapping is good for this usage as your hands stay
- on the home keys.  Personally, I have a window per project and rarely switch
- between them.  As such, I have the following lines in my `~/.tmux.conf`:
+ on the home keys.  Personally, I have  the following lines in my
+ `~/.tmux.conf` to more closely match vim:
 ```
-# Shift arrow to switch windows
-bind -n S-Left  previous-window
-bind -n S-Right next-window
+# alt H and L to switch windows
+bind -n M-H  previous-window
+bind -n M-L next-window
 ```
-This maps shift and the left and right arrow keys to cycle through the windows.
+This maps alt+shift and H or L keys to cycle through windows.
 
 ### EXERCISE
 Create a `~/.tmux.conf` file and add the above lines to it.  Changes to the
@@ -165,8 +165,8 @@ You can also add the following to your `~/.tmux.conf` to make re-sourcing faster
 bind r source-file ~/.tmux.conf \; display-message "Config reloaded..."
 ```
 
-Practice moving around with `C-b n/p` and `S-Left/Right`.  If you don't like
-the shift bindings, delete those lines from your `.tmux.conf` and re-source
+Practice moving around with `C-b n/p` and `alt-H/L`.  If you don't like
+the `H/L` bindings, delete those lines from your `.tmux.conf` and re-source
 the config file.
 
 ### EXERCISE
@@ -296,6 +296,26 @@ changed in version tmux 2.3.  Note the tmux buffer and your system clipboard
 system clipboard, the vim registers `*` and `+`, or use the mouse for
 selection.  Search for specifics if you are interested.
 
+You can pipe command outputs directly to the tmux buffer with
+```
+CMD | tmux loadb -
+
+# or in .bashrc
+# copy pipe to tmux buffer
+tmuxb(){
+    tmux loadb -
+}
+
+# copy pipe to tmux buffer without newlines
+tmuxn(){
+    tr -d '\n' | tmuxb
+}
+
+# then
+ls *.txt | tmuxb
+pwd | tmuxn
+```
+
 ## Conclusions
 This section covers a lot of tmux usage.  Don't try to use everything at once!
 Start with one session to keep things running when you log out of a cluster.
@@ -304,8 +324,9 @@ up how to enter copy mode again.  Remember that `C-b ?` will show all the key
 bindings.  There are entire books on tmux and much more advanced usage.  If you
 want to learn more, consider looking into:
  - Scripting specific window/pane layouts with certain commands
- - Personalizing the status bar
+ - Personalizing the status bar with the current weather
  - Sharing tmux sessions across clients
 
-The remaining sessions will use tmux to set up exercises.  Look at the scripts
-for examples of how to set up tmux sessions programmatically.
+The remaining sessions will use tmux to set up exercises and force you to
+practice.  Look at the scripts for examples of how to set up tmux sessions
+programmatically.

@@ -1,5 +1,5 @@
 # Preamble
-A good starting point for getting to a cluster is the 
+A good starting point for getting logging into a cluster is the 
 [removing tedium workshop](https://github.com/PrincetonUniversity/removing_tedium).
 Specifically, look into:
  - [Suppressing Duo](https://github.com/PrincetonUniversity/removing_tedium/tree/master/01_suppressing_duo)
@@ -12,10 +12,10 @@ may not be optimal for everyone.  Back up any rc files before you modify them.
 ## What we will gain
 When I first started using the command line to write software, it felt like
 working in honey.  Everything took so much mental effort, I couldn't see all
-my files with an explorer and copy-paste editing was slower than an IDE.  I
-could navigate the file system and open an editor, but then would have to
-close the editor to see the file I was operating on.  Clearly, this wasn't the
-way to get work done!
+my files with an explorer and copy-paste editing was slower than an IDE where I
+could use a mouse and fire off Ctrl-C Ctrl-V.  I could navigate the file system
+and open an editor, but then would have to close the editor to see the file I
+was operating on.  Clearly, this wasn't the way to get work done!
 
 I will share some of my favorite methods to smooth the seams of working on the
 command line.  In some ways, command line navigation will begin to feel like a
@@ -77,7 +77,7 @@ here are some shortcuts to start practicing!
 
 Give yourself a few weeks to learn these movements before changing your repeat
 rates back to normal.  If you are trying to stop using a command or other
-chord, consider setting an alias or remap to perform a no-op.
+chord, consider setting an alias or remap to perform a no-op or chastise yourself.
 
 ### Customization
 A great thing about the unix shell is that if you don't like something you
@@ -145,4 +145,4 @@ After tmux, we will cover a handful of useful commands that have a few
 features.  Next we will go over more advanced globbing, particularly to
 contrast with regular expressions.  The remainder of the course will cover
 regular expressions, in the context of grep, sed, and awk.  These commands will
-accelerate your ability to find, modify and calculate with data in files.
+accelerate your ability to find, modify and analyze files.

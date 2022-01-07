@@ -24,14 +24,14 @@ The script can be provided as a separate file using the `-f` option.
 The setup script in this module uses the same files as `02_misc`.
 
 ## When to use awk
-We are not going to cover many features in awk, so don't think that awk is
-not capable of performing complex tasks.  Suitable tasks for awk are
-intermediate in complexity.  Simple things like searching a file or printing
-a column are better for `grep` or `cut` respectively.  Generating a histogram
-or using one file to map/translate another are possible in awk, but before
-developing that solution ask yourself if python isn't a better choice so you
-can perform additional analyses on the results.  If your awk spreads over more
-than 2 lines, start writing python!
+We are going to omit many features in awk, so don't think that awk is
+not capable of performing complex tasks.  Suitable tasks for command line awk
+are intermediate in complexity.  Simple things like searching a file or
+printing a column are better for `grep` or `cut` respectively.  Generating a
+histogram or using one file to map/translate another are possible in awk, but
+before developing that solution ask yourself if python isn't a better choice so
+you can perform additional analyses on the results.  If your awk spreads over
+more than 2 lines, start writing python!
 
 Said another way, if you are thinking "I just want to do x", awk is probably
 suitable.  If you are thinking "awk could probably do this", you are right
@@ -89,7 +89,7 @@ Some observations you should be making:
  - The main loop is run for each line of input.
  - awk appears to split each line and provide the tokens in $n, where the first
    token is $1.
- - awk implicitly casts numeric types to numbers
+ - awk implicitly casts numeric text to numbers
 
 ### EXERCISE
 The `human.chrom.sizes` file has the name and size of all chromosomes in the
@@ -113,8 +113,8 @@ Variables can be set with the command line option `-v`, e.g.
 awk -v target=10 '{print target}'
 ```
 which is useful for passing bash arguments into an awk script.  Note these
-variables are initialized during the main loop and aren't set in a BEGIN
-block.
+variables are initialized during the main loop and aren't set or available in a
+BEGIN block.
 
 Built-in variables are all upper case.  The ones we will use are:
  - `FILENAME`  The current filename
@@ -204,7 +204,7 @@ awk scripts are a sequence of pattern-matching rules and associated actions.
 ```
 If a pattern is not present, the action is performed for every line.  If
 a pattern has no action, the default is `print $0`.  This means you can use
-awk like grep.  Printing every word containing `cat` would be performed like
+awk like grep.  Printing every line containing `cat` would be performed like
 ```
 awk '/cat/' words.txt
 ```

@@ -22,7 +22,7 @@ find [options] [starting-path...] [expression]
 The options define how links are handled and allow you to activate some
 optimizations and debug logging; we will ignore these.  The starting path
 determines the root of `find`'s execution.  The expression will filter which
-files are ultimately returned.
+files are returned.
 
 I always mix up the order of path and expression as it seems reverse of most
 commands, especially grep.  It may help to remember the argument order mimics
@@ -52,7 +52,8 @@ The first set of expressions we will cover are options that affect how find
 operates and traverses the file tree.
  - `-regextype <type>`: specify the type of regex syntax.  Includes egrep and
    posix-extended.
- - `-depth`: process directory contents before directories themselves.
+ - `-depth`: depth first search, process directory contents before directories
+   themselves.
  - `-maxdepth/-mindepth <level>`: limit directory traversal depth.
 
 ### EXERCISE
@@ -71,9 +72,9 @@ For the all the following, numeric arguments to expressions can be
  - `+n` for greater than `n`
 
 Files can be filtered by time of accession, `a`, status change, `c`, or
-modification, `m`.  Accession is when the file is opened, status change refers
-to a change in file type or permissions, modification is a change in the file
-contents.  You can test these values by minutes, `min`, or days, `time`.
+content modification, `m`.  Accession is when the file is opened, status change
+refers to a change in file type or permissions, modification is a change in the
+file contents.  You can test these values by minutes, `min`, or days, `time`.
 All together, the expressions are `/-[acm](min|time)/`.  These are harder to
 demonstrate as all the files were created recently.  Here are some example
 commands and their English translations:
@@ -91,7 +92,7 @@ constantly is searching for `-mmin 60` to try to find files modified in the
 last hour.  *This only finds files modified exactly 60 minutes ago and is
 usually nothing!*
 
-The last version of time refinement is `/-[ac]newer/`, which takes as an
+The last version of time refinement is `/-[ac]?newer/`, which takes as an
 argument a reference to a file or a time stamp to compare each file against.
 The expression `-newer` examines the modification time; `-mnewer` doesn't
 exist.
@@ -202,20 +203,21 @@ In the files directory, search for:
 Once you have a list of files, you may like to operate on them. We will cover
 `xargs` next, which is more powerful and general than the `-exec` of find, but
 two actions are worth mentioning:
- - `-delete`: Delete the matching files.  Importantly, this reverse traversal
-   to use the `-depth` option so directory contents are deleted before
-   attempting to delete the directory itself.  Deleting all empty files, slurm
-   outputs, or files above/below a certain size is very handy!
+ - `-delete`: Delete the matching files.  Importantly, this automatically sets
+   traversal to use the `-depth` option. This way directory contents are
+   deleted before attempting to delete the directory itself.  Deleting all
+   empty files, slurm outputs, or files above/below a certain size is very
+   handy!
  - `-print0`: This prints matches separated by a null character and simplifies
    piping to xargs.
 
 ### EXERCISE
 Find all empty files and directories and delete them.  Remove the `text.txt`
-file at the bottom of the deep directory and rerun the deletion command.
+file at the bottom of the deep directory and rerun the last deletion command.
 
 ## xargs
-We are going to use a limited set of `xargs` which will hopefully be enough to
-do basic jobs while motivating you to learn more if needed.
+We are going to use a basic set of `xargs` commands which will be enough to
+do many jobs while motivating you to learn more for advanced operations.
 
 If you have tried to use process substitution to pass a lot of files as
 arguments, say `rm $(ls *.txt)` you may have run into an error about providing
@@ -260,5 +262,5 @@ This can allow you to refactor a variable name or rename a library in a
 single line.
 
 If you have more complex operations, such a multiple commands or piping for
-xargs, consider wrapping everything in a separate script to invoke with
-xargs or script a for loop.
+xargs, consider wrapping everything in a separate shell script to invoke with
+xargs or with a for loop.

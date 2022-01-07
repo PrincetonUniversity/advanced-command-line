@@ -42,7 +42,7 @@ fi
 
 # run setup script in target
 echo Starting setup
-file_dir=/tmp/$USER/210119-ACL/$name
+file_dir=/tmp/$USER/advanced-command-line/$name
 mkdir -p $file_dir
 cd $file_dir
 $setup_script

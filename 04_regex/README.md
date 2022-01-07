@@ -31,7 +31,7 @@ looking for 5 numbers.  We can make this regex more specific, which in turn
 will make it longer and more convoluted to read.
 
 Keeping with the idea of describing your match, think about describing what you
-want to a child that has no idea what your data will look like.  The more often
+want to a child that only knows their alphabet, but not how to read.  The more often
 you say things like "but not always", "unless", "or" the more complex the regex
 will be.  For ZIP codes, we could maybe say the context should be "A ZIP code
 will have a state postal code before it, unless it's in text in which case the
@@ -41,10 +41,10 @@ of literature or scrapping web pages, simple regexes will take you a long ways.
 The more you use regexes the more often you can identify cases when they are
 useful.
 
-You won't come out of this section a master of regex, but hopefully you will
-get enough to be useful and maybe inspiration to learn more.  I am a fan of
-"Mastering Regular Expressions" by Jeffrey E.F. Friedl if you have a few weeks
-to enjoy reading about regexes!
+You won't come out of this section with a full knowledge of regex, but
+hopefully you will get enough to be useful and maybe inspiration to learn more.
+I am a fan of "Mastering Regular Expressions" by Jeffrey E.F. Friedl if you
+have a few weeks to enjoy reading about regexes!
 
 ## Getting Started
 Most programming languages have support for regexes but to start we will use
@@ -74,7 +74,7 @@ we can be more casual.  To search for a PATTERN in a FILE, use:
 egrep 'PATTERN' FILE
 ```
 The single quotes are important to prevent the shell from interpreting
-characters as pipes, redirects, etc.
+characters as globs, pipes, redirects, etc.
 
 If you want to match multiple patterns, they may be listed with the `-e`
 option.
@@ -155,10 +155,10 @@ Did you match Qatar?  How about Iraq?
 
 Some character classes are common enough to have metacharacters associated with
 them:
- - `\s`/`[[:blank:]]`: Whitespace (space, tab, newline, formfeed, etc)
- - `\S`: Not whitespace
- - `\w`/`[[:word:]]`: `[a-zA-Z0-9_]` alpha numerics with `_`
- - `\W`: `[^a-zA-Z0-9_]` non alpha numerics and whitespace
+ - `\s`/`[[:blank:]]`: White space (space, tab, newline, formfeed, etc)
+ - `\S`: Not white space
+ - `\w`/`[[:word:]]`: `[a-zA-Z0-9_]` alpha numeric with `_`
+ - `\W`: `[^a-zA-Z0-9_]` non alpha numeric and white space
  - `\d`/`[[:digit:]]`: `[0-9]`
  - `\D`: `[^0-9]`
 Perl, python, and vim use the `\x` shorthand or the POSIX standard, which
@@ -177,8 +177,8 @@ for a digit or a space.
 Search for any words in words.txt with a digit.  Remember egrep uses POSIX
 classes.
 
-Note that character classes can contain multiple ranges.  If you need a `-` in
-a character class, place it as the first character in the class.
+Note that character classes can contain multiple ranges, `[a-dw-z]`.  If you
+need a `-` in a character class, place it as the first character in the class.
 
 The last special character class is `.`, *dot*.  This matches any single
 character.  The dot is usually not specific enough to do what you want.  This
@@ -195,8 +195,8 @@ or end of the regex, it still has to match *some* character.
 You are playing hangman and the board is `_ _ a _ g _ _ _ _ d`, solve the
 puzzle!
 
-A similar concept to character classes are alternation, `|`.  Tokens on either
-side of the alternation are taken as valid matches for the regex.
+A similar concept to character classes is alternation, `|`.  Tokens on either
+side of the alternation are valid matches for the regex.
 ```
 egrep 'gr[ae]y' # equivalent to
 egrep 'gr(a|e)y'
@@ -223,7 +223,7 @@ Easy enough.  How about 2 vowels in a row?
 egrep '[aeiou][aeiou]' words.txt
 ```
 Clearly this would be repetitive for say, 5 vowels in a row.  Quantifiers
-allow you to specify a range of excepted occurrences of a character.  The
+allow you to specify a range of excepted occurrences of a subexpression.  The
 simplest syntax is asking for a specific number of occurrences.
 ```
 egrep '[aeiou]{5}' words.txt
@@ -243,7 +243,7 @@ psrgurisuinn
 ```
 HINT: use character classes and quantifiers.
 
-A range is specified like so:
+A range quantifier is specified like so:
 ```
 egrep 'a{1,3}' words.txt  # match between 1 and 3 a's, inclusive
 egrep 'a{0,1}' words.txt  # match 0 or 1 a
@@ -329,7 +329,7 @@ overseers
   ...2111
   ^     ^
 ```
-`ers` matches to the `...` and `\1` gets `ers` and `\2` gets `e`.
+`ers` matches to the `...`; `\1` gets `ers` and `\2` gets `e`.
 
 ### EXERCISE
 Again with `words.txt`
