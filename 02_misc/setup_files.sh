@@ -8,7 +8,9 @@ mkdir -p files
 cd files
 
 # metamorphosis
-wget -O metamorphosis.txt https://www.gutenberg.org/cache/epub/5200/pg5200.txt
+wget -O - https://www.gutenberg.org/files/5200/5200-0.txt | \
+    sed 's/[‘’]/'"'"'/g ; s/[“”]/"/g' \
+    > metamorphosis.txt 
 wget -O words.txt https://users.cs.duke.edu/~ola/ap/linuxwords
 wget -O word_counts.txt https://www.kilgarriff.co.uk/BNClists/lemma.al
 

@@ -15,7 +15,7 @@ following sections.
 The last three files are common formats in bioinformatics and are examples of
 structured text.
 
-From the base directory,
+From the base directory, outside of all tmux sessions,
 ```
 ./scripts/setup.sh 02_misc/
 ```
@@ -76,7 +76,7 @@ C-d
 If you don't like the alias, change or remove it from your bashrc.
 
 ## cut, paste, column
-If you frequently work with large, tabular data you have probably had to
+If you frequently work with wide, tabular data you have probably had to
 extract a few columns to examine a subset of the output.  To demonstrate,
 we will look at the `sample.vcf` file.  This file describes genetic mutations
 in individuals and consists of a header, which starts with `#` and tabular
@@ -98,15 +98,16 @@ Because column needs to read the entire file to determine column widths,
 be sure to only run it on small files (<100 lines) or the head of a larger
 file. Use the `-s` option to specify a character set to split on.
 
-Now that we can see the file, let's extract column 3 (ID) with cut.
+Now that we can see the file, let's extract columns 2 and 3 (position and ID)
+with cut.
 ```
-sed '/^##/d' sample.vcf | cut -f3 | column -t
+sed '/^##/d' sample.vcf | cut -f2,3 | column -t
 ```
 Note that `column` is the last command as it needs to format the extracted
 text.  Switching the order prints all columns as `column` uses spaces to align
 columns and `cut` expects tabs.
 
-You can specify the delimiter with the `-d` option, by default it is tab.
+You can specify the cut delimiter with the `-d` option, by default it is tab.
 To work with a csv, you would use `cut -d,`.
 
 The fields to extract are specified with the `-f` option.  The argument can
@@ -120,6 +121,9 @@ For example, `-f1-3,5,9-` would print columns 1 to 3, 5 and 9 to the end.
 ### EXERCISE
 Print the columns CHROM, POS, REF, ALT from the vcf file using cut.
 Try to change the order to CHROM, REF, ALT, POS.
+```
+sed '/^##/d' sample.vcf | cut -f<HERE> | column -t
+```
 
 You should have noticed that the order of printing from cut is determined by
 the file, not the listing of the fields.  We have to do some more work to
@@ -152,8 +156,8 @@ We also just learned about paste, which can combine two or more files together
 so how do we pipe two cut commands into a paste command?  You could use
 named pipes, but bash has a nice shortcut called process substitution.
 When you place a process in `<(CMD)` it acts as a file containing the stdout
-of `CMD`.  Similarly, `>(CMD)` can be used for piping output to a command, like
-`>(sort | uniq -c > out.txt)`.
+of `CMD`.  Similarly, `>(CMD)` can be used for piping output from a command
+which expects a file handle, like `>(sort | uniq -c > out.txt)`.
 
 So to print our vcf, we can use
 ```
@@ -260,14 +264,14 @@ The next line shows what the change is.  Lines starting with `<` signify the
 first file while a `>` signifies the second.  Here we only have a line for the
 first file because the line is missing in the second.
 
-`diff` has a few issues for use in debugging.  Usually you only care about the
-first difference as that's what you need to correct to get the test to pass.
-However, `diff` will generate the entire diff before printing anything, even
-if you pipe through head.  Say you have a difference on line 3 between two
-GB-sized files; diff will find all differences before reporting the difference
-on line 3.  I would recommend running cmp first to get an idea of where the
-files differ and then pipe your inputs through head to get just the first
-part of the differences.
+`diff` has a few issues for use in acceptance testing.  Usually you only care
+about the first difference as that's what you need to correct to get the test
+to pass. However, `diff` will generate the entire diff before printing
+anything, even if you pipe through head.  Say you have a difference on line 3
+between two GB-sized files; diff will find all differences before reporting the
+difference on line 3.  I would recommend running cmp first to get an idea of
+where the files differ and then pipe your inputs through head to get just the
+first part of the differences.
 ```
 # this only considers first 5 lines
 diff <(head -n 5 sample.fasta) <(sed '/^>/d' sample.fasta | head -n 5)
@@ -322,7 +326,7 @@ find -name '*.py' | entr -c bash -c 'sleep 1 && pytest'
 runs pytest any time a `.py` file is changed in the current directory
 structure.
 ```
-ls command.sh | entr -c bash -c 'sleep 1 && ./command.sh'
+echo command.sh | entr -c ./command.sh
 ```
 runs the `command.sh` script whenever it changes. Combined with tmux, you can
 simulate a lot of IDE capabilities with command line editors.

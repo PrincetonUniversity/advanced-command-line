@@ -150,19 +150,21 @@ bind -n M-L next-window
 This maps alt+shift and H or L keys to cycle through windows.
 
 ### EXERCISE
-Create a `~/.tmux.conf` file and add the above lines to it.  Changes to the
-tmux conf file will register when the server is restarted (e.g. all sessions
-are killed and a new session is created).  To have the changes take immediate
-effect, in a tmux session, type:
+Create a `~/.tmux.conf` file and add the following lines to it.  
+```
+# alt H and L to switch windows
+bind -n M-H  previous-window
+bind -n M-L next-window
+
+# Reload tmux config
+bind r source-file ~/.tmux.conf \; display-message "Config reloaded..."
+```
+Changes to the tmux conf file will register when the server is restarted (e.g.
+all sessions are killed and a new session is created).  To have the changes
+take immediate effect, in a tmux session, type:
 ```
 C-b :  # this brings up the tmux command prompt
 source-file ~/.tmux.conf  # this runs the source-file command and supplies the filename
-```
-
-You can also add the following to your `~/.tmux.conf` to make re-sourcing faster:
-```
-# Reload tmux config
-bind r source-file ~/.tmux.conf \; display-message "Config reloaded..."
 ```
 
 Practice moving around with `C-b n/p` and `alt-H/L`.  If you don't like
@@ -172,7 +174,7 @@ the config file.
 ### EXERCISE
 You may have noticed the name of the window changes when a new process is running.
 I find this distracting and not very informative.  Add the following to your
-`.tmux.conf` and re-source:
+`.tmux.conf` and re-source (`C-b r`):
 ```
 # Automatically set window title
 set-window-option -g allow-rename off
@@ -250,7 +252,7 @@ suit your needs and practice navigating between panes.
 
 ## Scrolling, copying, pasting
 Since we haven't run any commands that print a lot of output, you may not have
-encountered a very common use case.
+encountered a very common need: looking at long or old outputs.
 
 ### EXERCISE
  - Create a window with a left-right split pane.
@@ -278,10 +280,10 @@ vim mode) to search for a string.  Word-wise movements are also supported as
 are `C-u/d` to make larger jumps through the buffer.  Hitting `q` will exit
 copy mode.
 
-To start selecting text, press `C-Space`.  This anchors the current cursor
-position and allows you to move the cursor to specify the other end point.
-Unlike using a mouse, the selection is kept within a pane.  To confirm the
-selection and copy the selected text, press `C-w` (or `Enter`).
+To start selecting text, press `Space` or `C-Space`.  This anchors the current
+cursor position and allows you to move the cursor to specify the other end
+point. Unlike using a mouse, the selection is kept within a pane.  To confirm
+the selection and copy the selected text, press `C-w` (or `Enter`).
  - Search for a process with your user name and copy a few lines around it
    into the default buffer.
 

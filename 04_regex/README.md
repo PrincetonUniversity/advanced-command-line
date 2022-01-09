@@ -192,7 +192,7 @@ time replacing characters with a `.`.  Note that when the `.` is at the start
 or end of the regex, it still has to match *some* character.
 
 ### EXERCISE
-You are playing hangman and the board is `_ _ a _ g _ _ _ _ d`, solve the
+You are playing hangman and the board is `_ _ a _ g _ _ u _ d`, solve the
 puzzle!
 
 A similar concept to character classes is alternation, `|`.  Tokens on either
@@ -308,10 +308,10 @@ Mississippians  # MATCH i
 ```
 
 ## Backreferences and grouping parentheses
-Let's try to find all words with a repeated 3 character
-sequence, similar to `(alf)+`.  A first guess may be `(...){2}`, which is any
-three characters seen two times.  This is effectively `(...)(...)`, and
-matches anything with 6 or more characters.  Try it!
+Let's try to find all words with a repeated 3 character sequence, similar to
+`(alf)+`.  A first guess may be `(...){2}`, which is any three characters seen
+two times.  This is effectively `(...)(...)`, and matches anything with 6 or
+more characters.  Try it!
 
 Instead, we want the second appearance of `(...)` to match what is seen the
 first time.  So far we have used parentheses to group together characters to
@@ -333,8 +333,8 @@ overseers
 
 ### EXERCISE
 Again with `words.txt`
- - what is the difference between `(.){3}\1` and `(.{3})\1`?
- - What word has the four characters repeated in it?  Try again allowing
+ - What is the difference between `(.){3}\1`, `(.{3})\1` and `(.)(.)(.)\1`?
+ - What word has four characters repeated in it?  Try again allowing
    characters between the repeated string.
  - Palindromes in general are not regular, but for a given length we can
    still write a regex for them.  Find palindromes of length 3, 4, and 5.
