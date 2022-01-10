@@ -40,13 +40,13 @@ Try the following sed commands.
 ```
 head -n 15 metamorphosis.txt
 head -n 15 metamorphosis.txt | sed 's/Kafka/Ferdinand/'
-head -n 15 metamorphosis.txt | sed 's/Kafka/Wyllie/ ; s/Wyllie/Willy/'
+head -n 15 metamorphosis.txt | sed 's/Kafka/United States/ ; s/United States/World/'
 head -n 15 metamorphosis.txt | sed 's/it/Metamorphosis/'
 head -n 15 metamorphosis.txt | sed -n 's/it/Metamorphosis/p'
 head -n 15 metamorphosis.txt | sed -n 's/it/Metamorphosis/gp'
 head -n 15 metamorphosis.txt | sed -n 's/\<it\>/Metamorphosis/gp'
 head -n 15 metamorphosis.txt | sed -E 's/([A-Z])/+\1+/g'
-head -n 15 metamorphosis.txt | sed 's/gutenberg/Gutenburg/i'
+head -n 15 metamorphosis.txt | sed 's/gutenberg/GuTeNbUrG/i'
 ```
 
 You should have noticed:
@@ -248,7 +248,7 @@ just the preamble, you can run:
 sed '/^\*\*\* START/q' metamorphosis.txt
 sed '/^\*\*\* START/Q' metamorphosis.txt
 ```
-The `q` variant prints the contents of the line buffer before quiting, `Q`
+The `q` variant prints the contents of the line buffer before quitting, `Q`
 exits immediately.
 
 You can use quit to improve efficiency of a sed command by exiting
