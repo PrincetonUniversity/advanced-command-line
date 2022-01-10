@@ -144,7 +144,7 @@ of the following chords:
  `~/.tmux.conf` to more closely match vim:
 ```
 # alt H and L to switch windows
-bind -n M-H  previous-window
+bind -n M-H previous-window
 bind -n M-L next-window
 ```
 This maps alt+shift and H or L keys to cycle through windows.
@@ -153,7 +153,7 @@ This maps alt+shift and H or L keys to cycle through windows.
 Create a `~/.tmux.conf` file and add the following lines to it.  
 ```
 # alt H and L to switch windows
-bind -n M-H  previous-window
+bind -n M-H previous-window
 bind -n M-L next-window
 
 # Reload tmux config
