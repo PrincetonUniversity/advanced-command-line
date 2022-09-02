@@ -143,7 +143,7 @@ of the following chords:
  on the home keys.  Personally, I have  the following lines in my
  `~/.tmux.conf` to more closely match vim:
 ```
-# alt H and L to switch windows
+# alt-shift H and L to switch windows
 bind -n M-H previous-window
 bind -n M-L next-window
 ```
@@ -152,7 +152,7 @@ This maps alt+shift and H or L keys to cycle through windows.
 ### EXERCISE
 Create a `~/.tmux.conf` file and add the following lines to it.  
 ```
-# alt H and L to switch windows
+# alt-shift H and L to switch windows
 bind -n M-H previous-window
 bind -n M-L next-window
 
@@ -167,7 +167,7 @@ C-b :  # this brings up the tmux command prompt
 source-file ~/.tmux.conf  # this runs the source-file command and supplies the filename
 ```
 
-Practice moving around with `C-b n/p` and `alt-H/L`.  If you don't like
+Practice moving around with `C-b n/p` and `alt-shift-H/L`.  If you don't like
 the `H/L` bindings, delete those lines from your `.tmux.conf` and re-source
 the config file.
 
