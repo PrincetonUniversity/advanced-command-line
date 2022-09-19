@@ -293,7 +293,7 @@ with sed:
 ```
 sed -nE '/^ output:/{                # find output lines
   s/^.*: // ;                        # remove output token
-  s/(^|, )[^(,]\(pipe\)(, |$)/\1/ ;  # remove pipes
+  s/(^|, )[^(,]+\(pipe\)(, |$)/\1/ ; # remove pipes
   s/, /\n/g ;                        # split commas
   /^$/!p }'                          # print non-empty lines
   slurm*.out
